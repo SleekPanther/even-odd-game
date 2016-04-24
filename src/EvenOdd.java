@@ -5,6 +5,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Background;
@@ -14,13 +15,19 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class EvenOdd extends Application {
+	private final int windowWidth = 500;
+	
 	private Stage primaryStage;
+	//need to bring all labels & nodes outside as fields
+	
 	private int randomNumber = 1;
+	
 //	private boolean isGameOver = false;
 //	private Random randomGenerator = new Random();
 	
@@ -49,30 +56,63 @@ public class EvenOdd extends Application {
 		//http://stackoverflow.com/questions/19174983/javafx-layout-that-scales-with-parent
 		
 		GridPane mainPane = new GridPane();
-		FlowPane gameStatusTopbar = new FlowPane();
-		StackPane numberArea = new StackPane();
+		mainPane.setStyle("-fx-background-color:white");
+		StackPane gameStatusTopbar = new StackPane();
 		
 		Label gameStatusLabel = new Label("Game running/paused");
 		gameStatusTopbar.getChildren().add(gameStatusLabel);
-		gameStatusTopbar.setStyle("-fx-background-color:red");
+		gameStatusTopbar.setStyle("-fx-background-color:pink");
+		
+		
+		//timer & num
+		VBox timeScorePane = new VBox();
+		timeScorePane.setAlignment(Pos.CENTER);		//center the entire pane (& therefore all it's nodes)
+		timeScorePane.setStyle("-fx-background-color:green");
+		Label timeLabel = new Label("10");
+		timeLabel.setStyle("-fx-background-color:blue; -fx-font-size: 50px");
+		timeLabel.setAlignment(Pos.CENTER);
+		Label scoreLabel = new Label("0");
+		scoreLabel.setStyle("-fx-background-color:red; -fx-text-fill: yellow; -fx-font-size: 30px");
+		timeScorePane.getChildren().addAll(timeLabel,scoreLabel);
+		
+		
+		StackPane numberArea = new StackPane();
+		numberArea.setPrefHeight(200);
+		numberArea.setStyle("-fx-background-color:black");
+		
+		
+		Label randNumLabel = new Label( (int)(Math.random()*10) + "");
+		randNumLabel.setStyle("-fx-background-color:darkblue; -fx-text-fill:lime; -fx-font-size: 100px");
+		numberArea.getChildren().add(randNumLabel);
+		
+		
 		
 		Label evenLabel = new Label("Even \n(left)");
+		evenLabel.setStyle("-fx-background-color:white");
 		Label oddLabel = new Label("Odd \n(right)");
-		FlowPane evenPane = new FlowPane();
-		evenLabel.setStyle("-fx-background-color:yellow");
-		FlowPane oddPane = new FlowPane();
+		oddLabel.setStyle("-fx-background-color:white");
+		//FlowPane evenPane = new FlowPane();
+		StackPane evenPane = new StackPane();
+		evenPane.setPrefWidth(windowWidth/2.0);
+		evenPane.setStyle("-fx-background-color:lime");
+		//FlowPane oddPane = new FlowPane();
+		StackPane oddPane = new StackPane();
 		evenPane.getChildren().add(evenLabel);
-		oddLabel.setStyle("-fx-background-color:orange");
+		oddPane.setPrefWidth(windowWidth/2.0);		//take up half the window
+		oddPane.setStyle("-fx-background-color:orange");
 		oddPane.getChildren().add(oddLabel);
 		GridPane evenOddPane = new GridPane();	//add thing in constructor here
+		evenOddPane.setStyle("-fx-background-color:purple");
 		evenOddPane.addRow(0, evenPane, oddPane);
 		FlowPane evenOddContainer = new FlowPane();
+		//StackPane evenOddContainer = new StackPane();
 		evenOddContainer.getChildren().add(evenOddPane);
 		
-		mainPane.add(gameStatusTopbar, 0, 0);
-		mainPane.add(evenOddContainer,0,2);
+		mainPane.addColumn(0, gameStatusTopbar, timeScorePane, numberArea, evenOddContainer);
+//		mainPane.add(gameStatusTopbar, 0, 0);
+//		mainPane.add(evenOddContainer,0,2);
 		
-		mainPane.setPrefSize(300, 500);
+		mainPane.setPrefSize(300, windowWidth);
 		Scene scene = new Scene(mainPane);
 		
 		setUpKeyPresses();
