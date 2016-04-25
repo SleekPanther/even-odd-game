@@ -21,14 +21,16 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class EvenOdd extends Application {
-	private final int windowWidth = 500;
-	
+	private final int windowWidth = 360;
+	private final int windowHeight = 500;
 	private Stage primaryStage;
+	
+	private int finalScore;
 	//need to bring all labels & nodes outside as fields
 	
 	private int randomNumber = 1;
 	
-//	private boolean isGameOver = false;
+	private boolean isGameOver = false;
 //	private Random randomGenerator = new Random();
 	
 	public EvenOdd(){	//constructor
@@ -55,8 +57,8 @@ public class EvenOdd extends Application {
 		isUserGuessCorrect();
 		//http://stackoverflow.com/questions/19174983/javafx-layout-that-scales-with-parent
 		
-		GridPane mainPane = new GridPane();
-		mainPane.setStyle("-fx-background-color:white");
+		GridPane mainGamePane = new GridPane();
+		mainGamePane.setStyle("-fx-background-color:white");
 		StackPane gameStatusTopbar = new StackPane();
 		
 		Label gameStatusLabel = new Label("Game running/paused");
@@ -77,7 +79,7 @@ public class EvenOdd extends Application {
 		
 		
 		StackPane numberArea = new StackPane();
-		numberArea.setPrefHeight(200);
+		numberArea.setPrefHeight(200);		//maybe just leave this up to the pixel size of "randNumLabel" css fx
 		numberArea.setStyle("-fx-background-color:black");
 		
 		
@@ -98,7 +100,7 @@ public class EvenOdd extends Application {
 		//FlowPane oddPane = new FlowPane();
 		StackPane oddPane = new StackPane();
 		evenPane.getChildren().add(evenLabel);
-		oddPane.setPrefWidth(windowWidth/2.0);		//take up half the window
+		oddPane.setPrefWidth(windowWidth/2.0);		//take up half the window. +40 @ 360px width does a fix, but expands the entire window as  well
 		oddPane.setStyle("-fx-background-color:orange");
 		oddPane.getChildren().add(oddLabel);
 		GridPane evenOddPane = new GridPane();	//add thing in constructor here
@@ -108,17 +110,30 @@ public class EvenOdd extends Application {
 		//StackPane evenOddContainer = new StackPane();
 		evenOddContainer.getChildren().add(evenOddPane);
 		
-		mainPane.addColumn(0, gameStatusTopbar, timeScorePane, numberArea, evenOddContainer);
-//		mainPane.add(gameStatusTopbar, 0, 0);
-//		mainPane.add(evenOddContainer,0,2);
+		mainGamePane.addColumn(0, gameStatusTopbar, timeScorePane, numberArea, evenOddContainer);
+//		mainGamePane.add(gameStatusTopbar, 0, 0);
+//		mainGamePane.add(evenOddContainer,0,2);
 		
-		mainPane.setPrefSize(300, windowWidth);
-		Scene scene = new Scene(mainPane);
+		mainGamePane.setPrefSize(windowWidth, windowHeight);
+		Scene gameScene = new Scene(mainGamePane);
 		
-		setUpKeyPresses();
+		
+		
+		//stare creating "Game Over" scene --------------------------------------------------------------
+		VBox gameOverPane = new VBox();
+		gameOverPane.setPrefSize(windowWidth, windowHeight);
+		gameOverPane.setAlignment(Pos.CENTER);
+		Label gameOverLabel = new Label("game over");
+		Label finalScoreLbl = new Label("Score: ");
+		Label actualFinalScore = new Label("100...");
+		actualFinalScore.setStyle("-fx-font-size: 50px; ");
+		gameOverPane.getChildren().addAll(gameOverLabel,finalScoreLbl,actualFinalScore);
+		Scene gameOverScene = new Scene(gameOverPane);
+		//end creating game over scene -------------------------------------------------------------------
+		
 		
 		primaryStage.setTitle("Even Odd");
-        primaryStage.setScene(scene);
+        primaryStage.setScene(gameScene);
         //primaryStage.setResizable(false);		//this makes the window NON-resizable. For some reason this messed up my window size & "grew" by 12 pixels on the bottom & right edges of the black pane
         primaryStage.show();
 		
@@ -127,11 +142,19 @@ public class EvenOdd extends Application {
 //        animation.setCycleCount(Timeline.INDEFINITE);
 //        animation.play();
 		
-		
+        mainGamePane.requestFocus();
+        //gameOverPane.requestFocus();
+        mainGamePane.setOnKeyPressed(e -> { 
+			identifyKeyPress();
+		});
+        gameOverPane.setOnKeyPressed(e -> { 
+			identifyKeyPress();
+		});
 	}
 	
-	public void setUpKeyPresses(){
+	public void identifyKeyPress(){
 		//switch cases
+		System.out.println("keypress");
 	}
 	
 	public void startAGame(){	//called by pressing Enter
@@ -185,9 +208,18 @@ public class EvenOdd extends Application {
 		//called by pressing P. Do checking here to see check status. if(paused), then resume, else (no need to check if NOT paused since boolean, speed up by eliminating another equality check)
 	}
 	
+	public void showGameOver(){
+		//primaryStage.setScene(gameOverScene);
+		
+		//turn off all keypresses & wait for "R" 
+		//reStartGame()
+	}
+	
 	public void restartGame(){	//possibly need params, or just do something magical & wipe everything, maybe just call the "set up game"
-		//
-		//maybe don't close the entire stage, just paint over with yellow & start again
+		//primaryStage.setScene(gameScene);
+		/* most important= switch scene, then start the countdown
+		maybe don't even initialize the fields with text until here, then can call this from setUpGUI
+		or since labels text can be set when doing  =  new Label("text"), maybe it's good to have placeholder	*/
 		
 	}
 
