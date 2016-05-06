@@ -1,4 +1,4 @@
-//consolodate imports?
+//consolodate/organize imports?
 import java.util.Random;
 import java.util.Scanner;
 import javafx.animation.KeyFrame;
@@ -8,6 +8,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -21,15 +22,20 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class EvenOdd extends Application {
-	private final int windowWidth = 360;
+	private final int windowWidth = 360;		//constants for size of the window
 	private final int windowHeight = 500;
 	private Stage primaryStage;
 	
-	private int finalScore;
+	private int finalScore = 0;			//holds the running total of their score for each game played. Reset on each game (maybe work in highscore somehow)
 	//need to bring all labels & nodes outside as fields
 	
-	private int randomNumber = 1;
+	private double timeRemaining = 10;
 	
+	private int randomNumber = 1;
+	private Random generator = new Random();
+	private final int RANDOM_UPPER_BOUND = 101;			//generate random number between 0 & 1 less than this number 
+	
+	private String gameMode = "running";		//"waiting" = start screen, "running"=currently being played & new number show up, "over"=switch scene & display score
 	private boolean isGameOver = false;
 //	private Random randomGenerator = new Random();
 	
@@ -48,11 +54,10 @@ public class EvenOdd extends Application {
 //		EvenOdd game = new EvenOdd();
 //		game.isUserGuessCorrect();
 		
-		Application.launch(args);
-		//startAGame();
+		Application.launch(args);		//mostly optional for editors that don't natively support JavaFX
 	}
 
-	public void setUpGUI(){		//needs to show a GUI & be waiting for ENTER to start
+	public void setUpGUI(){		//needs to show a GUI & be waiting for SPACE to start
 		System.out.println("set up game");
 		isUserGuessCorrect();
 		//http://stackoverflow.com/questions/19174983/javafx-layout-that-scales-with-parent
@@ -61,7 +66,7 @@ public class EvenOdd extends Application {
 		mainGamePane.setStyle("-fx-background-color:white");
 		StackPane gameStatusTopbar = new StackPane();
 		
-		Label gameStatusLabel = new Label("Game running/paused");
+		Label gameStatusLabel = new Label("Might not need");
 		gameStatusTopbar.getChildren().add(gameStatusLabel);
 		gameStatusTopbar.setStyle("-fx-background-color:pink");
 		
@@ -84,7 +89,9 @@ public class EvenOdd extends Application {
 		
 		
 		Label randNumLabel = new Label( (int)(Math.random()*10) + "");
-		randNumLabel.setStyle("-fx-background-color:darkblue; -fx-text-fill:lime; -fx-font-size: 100px");
+		randNumLabel.setText("Press any key to start");
+		randNumLabel.setStyle("-fx-background-color:darkblue; -fx-text-fill:lime; -fx-font-size: 30px");
+		//randNumLabel.setStyle("-fx-font-size: 100px");		//make it biger in startAGame
 		numberArea.getChildren().add(randNumLabel);
 		
 		
@@ -145,19 +152,33 @@ public class EvenOdd extends Application {
         mainGamePane.requestFocus();
         //gameOverPane.requestFocus();
         mainGamePane.setOnKeyPressed(e -> { 
-			identifyKeyPress();
+			identifyKeyPress(e);
 		});
         gameOverPane.setOnKeyPressed(e -> { 
-			identifyKeyPress();
+			identifyKeyPress(e);
 		});
 	}
 	
-	public void identifyKeyPress(){
-		//switch cases
+	public void identifyKeyPress(KeyEvent e){
+		//switch cases for left/right
 		System.out.println("keypress");
+		
+		if(gameMode.equals("waiting") || gameMode.equals("over")){
+			//start new game
+		}
+		else if(gameMode.equals("running")){
+			switch (e.getCode()) {
+            case LEFT:
+            	System.out.println("left");
+                break;
+            case RIGHT:
+            	System.out.println("Right");
+                break;
+			}
+		}
 	}
 	
-	public void startAGame(){	//called by pressing Enter
+	public void startAGame(){	//called by pressing any key while in "waiting" mode
 		
 		boolean isGameOver = false;
 		Random randomGenerator = new Random();
@@ -180,6 +201,16 @@ public class EvenOdd extends Application {
 				isGameOver = false;
 			}
 		}
+		
+		while(timeRemaining >0){
+			//actually run hte game
+		}
+	}
+	
+	public void updateTimer(){
+		
+		timeRemaining -= .01;
+		timeRemaining = (Math.round(timeRemaining * 100) ) /100;
 	}
 	
 	public boolean isUserGuessCorrect(){
@@ -187,13 +218,13 @@ public class EvenOdd extends Application {
 //        	System.out.println(e.getCode());	//print the key code. 
 	//}
 		/*
-		 need some basic start method to set up GUI (splash screen, title, "Press ENTER to start")
+		 need some basic start method to set up GUI (splash screen, title, "Press SPACE to start")
 		 want to ignore all bu important key presses. Use switch like in Tetris
 		code scenarios for each important key. LEFT or RIGHT both call the isUserGuessCorrect() method to validate, then it should refresh the display & make another number
-		P should pause, R   should restart, but bring up dialog
-		ENTER @ the start of the game should call the start method, or something to actually get the game rolling
-		need variable to see if the game is currently running, in each of the pause, restart and isUserGuessCorrect methods need to check if game is running. Only execute if it is running
-		Enter should only happen if the game isn't running (i.e. it's the splash screen)
+		R   should restart, but bring up dialog
+		SPACE @ the start of the game should call the start method, or something to actually get the game rolling
+		need variable to hold "gameState", use string. "welcome" "running" "over", over=switch scene. in each of the  restart and isUserGuessCorrect methods need to check if game is running. Only execute if it is running
+		Space=start should only happen if the game isn't running (i.e. it's the splash screen)
 		 */
 		
 		System.out.println(randomNumber);
@@ -201,11 +232,8 @@ public class EvenOdd extends Application {
 	}
 	
 	public void displayNewNumber(){
-		//some gui stuff to pick a new random & display it
-	}
-	
-	public void pauseGame(){
-		//called by pressing P. Do checking here to see check status. if(paused), then resume, else (no need to check if NOT paused since boolean, speed up by eliminating another equality check)
+		//some gui stuff to pick a new random & display it. pick new int from generator & display it
+		//generator.nextnt(RANDOM_UPPER_BOUND);		//between 0 & 101
 	}
 	
 	public void showGameOver(){
@@ -216,6 +244,7 @@ public class EvenOdd extends Application {
 	}
 	
 	public void restartGame(){	//possibly need params, or just do something magical & wipe everything, maybe just call the "set up game"
+		finalScore = 0;
 		//primaryStage.setScene(gameScene);
 		/* most important= switch scene, then start the countdown
 		maybe don't even initialize the fields with text until here, then can call this from setUpGUI
