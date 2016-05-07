@@ -1,4 +1,5 @@
 //consolodate/organize imports?
+import java.text.DecimalFormat;
 import java.util.Random;
 import java.util.Scanner;
 import javafx.animation.KeyFrame;
@@ -25,11 +26,13 @@ public class EvenOdd extends Application {
 	private final int windowWidth = 360;		//constants for size of the window
 	private final int windowHeight = 500;
 	private Stage primaryStage;
+	//need to bring all labels & nodes outside as fields
+	private Label timeLabel;
 	
 	private int finalScore = 0;			//holds the running total of their score for each game played. Reset on each game (maybe work in highscore somehow)
-	//need to bring all labels & nodes outside as fields
 	
 	private double timeRemaining = 10;
+	private DecimalFormat dFormatter = new DecimalFormat("0.00");		//always want 2 decimals, so need formatter & convert timeRemaining to string before displaying to avoid rounding 9.80 to just 9.8
 	
 	private int randomNumber = 1;
 	private Random generator = new Random();
@@ -75,7 +78,7 @@ public class EvenOdd extends Application {
 		VBox timeScorePane = new VBox();
 		timeScorePane.setAlignment(Pos.CENTER);		//center the entire pane (& therefore all it's nodes)
 		timeScorePane.setStyle("-fx-background-color:green");
-		Label timeLabel = new Label("10");
+		timeLabel = new Label("10");
 		timeLabel.setStyle("-fx-background-color:blue; -fx-font-size: 50px");
 		timeLabel.setAlignment(Pos.CENTER);
 		Label scoreLabel = new Label("0");
@@ -149,14 +152,22 @@ public class EvenOdd extends Application {
 //        animation.setCycleCount(Timeline.INDEFINITE);
 //        animation.play();
 		
-        mainGamePane.requestFocus();
-        //gameOverPane.requestFocus();
-        mainGamePane.setOnKeyPressed(e -> { 
-			identifyKeyPress(e);
-		});
-        gameOverPane.setOnKeyPressed(e -> { 
-			identifyKeyPress(e);
-		});
+        if(gameMode.equals("over") ){
+        	gameOverPane.requestFocus();
+        	gameOverPane.setOnKeyPressed(e -> { 
+    			identifyKeyPress(e);
+    		});
+        }
+        else{
+        	mainGamePane.requestFocus();
+            mainGamePane.setOnKeyPressed(e -> { 
+    			identifyKeyPress(e);
+    		});
+        }
+        
+        for(int i =0; i<20; i++){
+        	updateTimer();
+        }
 	}
 	
 	public void identifyKeyPress(KeyEvent e){
@@ -178,7 +189,7 @@ public class EvenOdd extends Application {
 		}
 	}
 	
-	public void startAGame(){	//called by pressing any key while in "waiting" mode
+	public void startAGame0(){	//called by pressing any key while in "waiting" mode
 		
 		boolean isGameOver = false;
 		Random randomGenerator = new Random();
@@ -207,10 +218,16 @@ public class EvenOdd extends Application {
 		}
 	}
 	
-	public void updateTimer(){
-		
-		timeRemaining -= .01;
-		timeRemaining = (Math.round(timeRemaining * 100) ) /100;
+	public void updateTimer(){		
+		if(timeRemaining>0){			//execute while >0, & the containing block only call this method while gameMode is "running"
+			timeRemaining -= .01;		//decrement by .01 for every 100th of a second
+			timeRemaining = (Math.round(timeRemaining * 100) ) /100.0;		//round the result just in case, maybe optional
+			
+			timeLabel.setText( dFormatter.format(timeRemaining) ); 		//update the time remaining, must do string concatenation
+		}
+		else{		//game is over once time remainins is 0
+			gameMode = "over";
+		}
 	}
 	
 	public boolean isUserGuessCorrect(){
