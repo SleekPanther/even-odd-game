@@ -27,6 +27,7 @@ public class EvenOdd extends Application {
 	private final int windowHeight = 500;
 	private Stage primaryStage;
 	//need to bring all labels & nodes outside as fields
+	private Scene gameOverScene;
 	private Label timeLabel;
 	
 	private int finalScore = 0;			//holds the running total of their score for each game played. Reset on each game (maybe work in highscore somehow)
@@ -138,7 +139,7 @@ public class EvenOdd extends Application {
 		Label actualFinalScore = new Label("100...");
 		actualFinalScore.setStyle("-fx-font-size: 50px; ");
 		gameOverPane.getChildren().addAll(gameOverLabel,finalScoreLbl,actualFinalScore);
-		Scene gameOverScene = new Scene(gameOverPane);
+		gameOverScene = new Scene(gameOverPane);
 		//end creating game over scene -------------------------------------------------------------------
 		
 		
@@ -152,7 +153,9 @@ public class EvenOdd extends Application {
 //        animation.setCycleCount(Timeline.INDEFINITE);
 //        animation.play();
 		
+        //gameMode = "over";
         if(gameMode.equals("over") ){
+        	showGameOver();
         	gameOverPane.requestFocus();
         	gameOverPane.setOnKeyPressed(e -> { 
     			identifyKeyPress(e);
@@ -254,7 +257,7 @@ public class EvenOdd extends Application {
 	}
 	
 	public void showGameOver(){
-		//primaryStage.setScene(gameOverScene);
+		primaryStage.setScene(gameOverScene);
 		
 		//turn off all keypresses & wait for "R" 
 		//reStartGame()
