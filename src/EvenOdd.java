@@ -7,7 +7,6 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -37,8 +36,10 @@ public class EvenOdd extends Application {
 	private VBox gameOverPane;
 	private GridPane mainGamePane;
 	private Label randNumLabel;
+	private Label scoreLabel;
 	
 	private int finalScore = 0;			//holds the RUNNING TOTAL of their score for each game played. Reset on each game (maybe work in highscore somehow...)
+	private int bonusTimeCounter = 0;
 	
 	private double timeRemaining = 40;
 	private DecimalFormat dFormatter = new DecimalFormat("0.0");		//always want 2 decimals, so need formatter & convert timeRemaining to string before displaying to avoid rounding 9.80 to just 9.8
@@ -51,7 +52,6 @@ public class EvenOdd extends Application {
 	
 	private String gameMode = "running";		//"waiting" = start screen, "running"=currently being played & new number show up, "over"=switch scene & display score
 	private boolean isGameOver = false;
-//	private Random randomGenerator = new Random();
 	
 	public EvenOdd(){	//constructor
 		
@@ -92,7 +92,7 @@ public class EvenOdd extends Application {
 		timeLabel = new Label(timeRemaining + "");		//create label & set text. Kind of unnecessary since updateTimer() is called almost immediately which starts counting down from 10 anyway
 		timeLabel.setStyle("-fx-background-color:blue; -fx-font-size: 50px");
 		timeLabel.setAlignment(Pos.CENTER);
-		Label scoreLabel = new Label(finalScore + "");		//set initial score to 0. 
+		scoreLabel = new Label(finalScore + "");		//set initial score to 0. 
 		scoreLabel.setStyle("-fx-background-color:red; -fx-text-fill: yellow; -fx-font-size: 30px");
 		timeScorePane.getChildren().addAll(timeLabel,scoreLabel);
 		
@@ -107,7 +107,6 @@ public class EvenOdd extends Application {
 		randNumLabel.setStyle("-fx-background-color:darkblue; -fx-text-fill:lime; -fx-font-size: 30px");
 		//randNumLabel.setStyle("-fx-font-size: 100px");		//make it biger in startAGame
 		numberArea.getChildren().add(randNumLabel);
-		
 		
 		
 		Label evenLabel = new Label("Even \n(left)");
@@ -272,15 +271,17 @@ public class EvenOdd extends Application {
 	public boolean isUserGuessCorrect(){
 		if( currentUserGuess.equals("EVEN") && (randomNumber%2==0 ) ){
 			System.out.println(randomNumber + "  is even, correct");
+			updateScore();
 			displayNewNumber();
 		}
 		else if( currentUserGuess.equals("ODD") && (randomNumber%2 !=0 ) ){
 			System.out.println(randomNumber + "  is odd, correct");
+			updateScore();
 			displayNewNumber();
 		}
 		else{
-			gameMode = "over";
-			System.out.println("fail");
+			gameMode = "over";	//change the state of the game
+			showGameOver();			//switch scenes if they guess wrong
 		}
 		
 //		tetrisBoard.setOnKeyPressed(e -> {		//tetrisBoard=pane
@@ -295,20 +296,30 @@ public class EvenOdd extends Application {
 		need variable to hold "gameState", use string. "welcome" "running" "over", over=switch scene. in each of the  restart and isUserGuessCorrect methods need to check if game is running. Only execute if it is running
 		Space=start should only happen if the game isn't running (i.e. it's the splash screen)
 		 */
-		
-		
 		return true;
+	}
+	
+	public void updateScore(){
+		finalScore++;		//increment score
+		scoreLabel.setText(finalScore + "");
+		bonusTimeCounter++;		//increment the bonus time counter as well as finalScore
+		if(bonusTimeCounter == 10){
+			//bonusTimeLabel.setText("+10 Sec");
+			System.out.println("+10 Sec");
+			timeRemaining += 10;			//add 10 to time remaining. Since the animation is still running, this new time will be updated in 10 miliseconds when updateTimer is called
+			bonusTimeCounter = 0;		//reset bonus
+		}
 	}
 	
 	public void displayNewNumber(){
 		//some gui stuff to pick a new random & display it. pick new int from generator & display it
 		randomNumber = generator.nextInt(RANDOM_UPPER_BOUND);		//between 0 & 101
-		randNumLabel.setText(randomNumber + "");
+		randNumLabel.setText(randomNumber + "");		//update label text
 	}
 	
 	public void showGameOver(){
 		System.out.println("overrrrrr");
-		//primaryStage.setScene(gameOverScene);
+		primaryStage.setScene(gameOverScene);
 		
 		//turn off all keypresses & wait for "R" 
 		//reStartGame()
