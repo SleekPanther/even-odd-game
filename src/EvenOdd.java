@@ -1,10 +1,12 @@
-//consolodate/organize imports?
+//Consolidate/organize imports?
 import java.text.DecimalFormat;
 import java.util.Random;
 import java.util.Scanner;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -27,13 +29,16 @@ public class EvenOdd extends Application {
 	private final int windowHeight = 500;
 	private Stage primaryStage;
 	//need to bring all labels & nodes outside as fields
+	private static final double MILLISEC = 100;		//update timer every 100 ms, or 10th of a second
+	private Timeline animation;									//timeline is called every MILISEC to update the contents of the timer label & count down the time 
+	
 	private Scene gameOverScene;
 	private Label timeLabel;
 	
-	private int finalScore = 0;			//holds the running total of their score for each game played. Reset on each game (maybe work in highscore somehow)
+	private int finalScore = 0;			//holds the RUNNING TOTAL of their score for each game played. Reset on each game (maybe work in highscore somehow...)
 	
 	private double timeRemaining = 10;
-	private DecimalFormat dFormatter = new DecimalFormat("0.00");		//always want 2 decimals, so need formatter & convert timeRemaining to string before displaying to avoid rounding 9.80 to just 9.8
+	private DecimalFormat dFormatter = new DecimalFormat("0.0");		//always want 2 decimals, so need formatter & convert timeRemaining to string before displaying to avoid rounding 9.80 to just 9.8
 	
 	private int randomNumber = 1;
 	private Random generator = new Random();
@@ -79,10 +84,10 @@ public class EvenOdd extends Application {
 		VBox timeScorePane = new VBox();
 		timeScorePane.setAlignment(Pos.CENTER);		//center the entire pane (& therefore all it's nodes)
 		timeScorePane.setStyle("-fx-background-color:green");
-		timeLabel = new Label("10");
+		timeLabel = new Label(timeRemaining + "");		//create label & set text. Kind of unnecessary since updateTimer() is called almost immediately which starts counting down from 10 anyway
 		timeLabel.setStyle("-fx-background-color:blue; -fx-font-size: 50px");
 		timeLabel.setAlignment(Pos.CENTER);
-		Label scoreLabel = new Label("0");
+		Label scoreLabel = new Label(finalScore + "");		//set initial score to 0. 
 		scoreLabel.setStyle("-fx-background-color:red; -fx-text-fill: yellow; -fx-font-size: 30px");
 		timeScorePane.getChildren().addAll(timeLabel,scoreLabel);
 		
@@ -147,12 +152,7 @@ public class EvenOdd extends Application {
         primaryStage.setScene(gameScene);
         //primaryStage.setResizable(false);		//this makes the window NON-resizable. For some reason this messed up my window size & "grew" by 12 pixels on the bottom & right edges of the black pane
         primaryStage.show();
-		
-		//maybe call restart a game?? this should just set up the GUI
-//		animation = new Timeline(new KeyFrame(Duration.millis(MILLISEC), eventHandler));
-//        animation.setCycleCount(Timeline.INDEFINITE);
-//        animation.play();
-		
+        
         //gameMode = "over";
         if(gameMode.equals("over") ){
         	showGameOver();
@@ -168,10 +168,18 @@ public class EvenOdd extends Application {
     		});
         }
         
-        for(int i =0; i<20; i++){
-        	updateTimer();
-        }
+        startAGame();		//start a game once the GUI is set up
 	}
+	
+	private void setUpAnimation() {
+        EventHandler<ActionEvent> eventHandler = (ActionEvent e) -> {		// Create a handler. (what to do when the timeline "updates")
+        	updateTimer();
+        };
+        // Create an animation for "countdown timer"
+        animation = new Timeline(new KeyFrame(Duration.millis(MILLISEC), eventHandler));
+        animation.setCycleCount(Timeline.INDEFINITE);
+        animation.play();
+    }
 	
 	public void identifyKeyPress(KeyEvent e){
 		//switch cases for left/right
@@ -190,6 +198,10 @@ public class EvenOdd extends Application {
                 break;
 			}
 		}
+	}
+	
+	public void startAGame(){
+		setUpAnimation();		//sets up the animation
 	}
 	
 	public void startAGame0(){	//called by pressing any key while in "waiting" mode
@@ -223,8 +235,8 @@ public class EvenOdd extends Application {
 	
 	public void updateTimer(){		
 		if(timeRemaining>0){			//execute while >0, & the containing block only call this method while gameMode is "running"
-			timeRemaining -= .01;		//decrement by .01 for every 100th of a second
-			timeRemaining = (Math.round(timeRemaining * 100) ) /100.0;		//round the result just in case, maybe optional
+			timeRemaining -= .1;		//decrement by .01 for every 100th of a second
+			timeRemaining = (Math.round(timeRemaining * 10) ) /10.0;		//round the result just in case, maybe optional
 			
 			timeLabel.setText( dFormatter.format(timeRemaining) ); 		//update the time remaining, must do string concatenation
 		}
