@@ -33,7 +33,8 @@ public class EvenOdd extends Application {
 	private static final double BONUS_TIME_MILLISEC = 2000;		//display bonus message for 2 seconds
 	private Timeline bonusTimeAnimation;							//timeline for bonus "+10 Sec" message (only called if they get 10 in a row, then on every successive 10
 	
-	private Scene gameOverScene;
+	private Scene gameScene;				//main "game is running" scene
+	private Scene gameOverScene;		//this scene displays the score
 	private Label timeLabel;
 	private VBox gameOverPane;
 	private GridPane mainGamePane;
@@ -85,7 +86,7 @@ public class EvenOdd extends Application {
 		gameStatusTopbar.setStyle("-fx-background-color:pink");
 		
 		
-		//timer & random numers
+		//timer & random numbers
 		VBox timeScorePane = new VBox();
 		timeScorePane.setAlignment(Pos.CENTER);		//center the entire pane (& therefore all it's nodes)
 		timeScorePane.setStyle("-fx-background-color:green");
@@ -137,7 +138,7 @@ public class EvenOdd extends Application {
 //		mainGamePane.add(evenOddContainer,0,2);
 		
 		mainGamePane.setPrefSize(windowWidth, windowHeight);
-		Scene gameScene = new Scene(mainGamePane);
+		gameScene = new Scene(mainGamePane);
 		
 		
 		
@@ -161,6 +162,7 @@ public class EvenOdd extends Application {
         
         //used to be requesting focus here
         
+        setUpAnimation();		//only need to call once
         verifyGameState();		//start a game once the GUI is set up
 	}
 	
@@ -210,7 +212,7 @@ public class EvenOdd extends Application {
 	}
 	
 	public void verifyGameState(){
-		setUpAnimation();		//sets up the animation, 
+		//setUpAnimation();		//sets up the animation, 
 		
 		
 //		if (gameMode.equals("running")) {
@@ -232,7 +234,7 @@ public class EvenOdd extends Application {
 		
 		//gameMode = "over";
 		if (gameMode.equals("over")) {
-			showGameOver();
+			//showGameOver();
 			gameOverPane.requestFocus();
 			gameOverPane.setOnKeyPressed(e -> {
 				identifyKeyPress(e);
@@ -246,6 +248,8 @@ public class EvenOdd extends Application {
 	}
 	
 	public void startAGame(){
+		
+		primaryStage.setScene(gameScene);		//make sure the scene switches from "gameOverScene" whena new game starts. (If it's the first time the game is being played, this line is already executed in setUPGUI, so it's a little redundant, but it doens't matter)
 		gameMode = "running";		//change the "mode" back to "running"
 		timerAnimation.play();			//& start the countdown
 		
@@ -253,30 +257,30 @@ public class EvenOdd extends Application {
 		displayNewNumber();
 	}
 	
-	public void startAGame0(){	//called by pressing any key while in "waiting" mode
-		
-		boolean isGameOver = false;
-		Random randomGenerator = new Random();
-		randomGenerator.setSeed(System.currentTimeMillis());		//random seed based on time
-		
-		Scanner scan = new Scanner(System.in);
-		
-		System.out.println("[ is even ] is odd");
-		
-		while(!isGameOver){
-			isGameOver = true;
-			int random = randomGenerator.nextInt(100);
-			System.out.println(random + ": ");
-			String answer = scan.next();
-			if( (answer.equals("[")) && (random%2==0) ){
-				isGameOver = false;
-			}
-			if( (answer.equals("]")) && (random%2!=0) ){
-				isGameOver = false;
-			}
-		}
-		
-	}
+//	public void startAGame0(){	//called by pressing any key while in "waiting" mode
+//		
+//		boolean isGameOver = false;
+//		Random randomGenerator = new Random();
+//		randomGenerator.setSeed(System.currentTimeMillis());		//random seed based on time
+//		
+//		Scanner scan = new Scanner(System.in);
+//		
+//		System.out.println("[ is even ] is odd");
+//		
+//		while(!isGameOver){
+//			isGameOver = true;
+//			int random = randomGenerator.nextInt(100);
+//			System.out.println(random + ": ");
+//			String answer = scan.next();
+//			if( (answer.equals("[")) && (random%2==0) ){
+//				isGameOver = false;
+//			}
+//			if( (answer.equals("]")) && (random%2!=0) ){
+//				isGameOver = false;
+//			}
+//		}
+//		
+//	}
 	
 	public void updateTimer(){		
 		if(timeRemaining>0){			//execute while >0, & the containing block only call this method while gameMode is "running"
@@ -285,8 +289,9 @@ public class EvenOdd extends Application {
 			
 			timeLabel.setText( dFormatter.format(timeRemaining) ); 		//update the time remaining, must do string concatenation
 		}
-		else{		//game is over once time remainins is 0
+		else{		//game is over once time remaining is 0
 			gameMode = "over";
+			showGameOver();	
 		}
 	}
 	
@@ -340,7 +345,7 @@ public class EvenOdd extends Application {
 	
 	public void showGameOver(){
 		primaryStage.setScene(gameOverScene);
-		
+		verifyGameState();		//sets the focus to the appropriate pane
 	}
 	
 	public void restartGame(){	//possibly need params, or just do something magical & wipe everything, maybe just call the "set up game"
