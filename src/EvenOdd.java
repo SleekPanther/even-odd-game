@@ -163,6 +163,9 @@ public class EvenOdd extends Application {
         verifyGameState();		//start a game once the GUI is set up
 	}
 	
+	/**
+	 * sets up the animations (Timelines), but doesn't actually start counting down until a keypress happens and the gameMode allows the game to start
+	 */
 	private void setUpAnimation() {
         EventHandler<ActionEvent> timerEventHandler = (ActionEvent e) -> {		// Create a handler. (what to do when the timeline "updates")
         	updateTimer();
@@ -171,16 +174,24 @@ public class EvenOdd extends Application {
         timerAnimation = new Timeline(new KeyFrame(Duration.millis(MILLISEC), timerEventHandler));
         timerAnimation.setCycleCount(Timeline.INDEFINITE);
         
-        
+        EventHandler<ActionEvent> bonusTimeEventHandler = (ActionEvent e) -> {		// Handler to add bonus message
+        	bonusTimeLabel.setText("+10 Sec");
+        };
+        EventHandler<ActionEvent> bonusTimeEventHandler2 = (ActionEvent e) -> {		// handler to set text back to nothing
+        	bonusTimeLabel.setText("");
+        };
+        // animation from bonus message. 1st keyframe is to display message & time=0. 2nd keyframe is to set text to empty, & this lasts length of BONUS_TIME_MILLISEC. Impossible to detect changes on INDEFINITE, but works for just 1 cycle 
+        bonusTimeAnimation = new Timeline(new KeyFrame(Duration.millis(0), bonusTimeEventHandler),  new KeyFrame(Duration.millis(2000), bonusTimeEventHandler2) );
+        bonusTimeAnimation.setCycleCount(1);		//only repeat the 
     }
 	
 	public void identifyKeyPress(KeyEvent e){
 		//switch cases for left/right
 		System.out.println("keypress main method");
 		
-		if(gameMode.equals("waiting") || gameMode.equals("over")){
-			gameMode = "running";
-			timerAnimation.play();
+		if(gameMode.equals("waiting") || gameMode.equals("over")){		//if the game ISN't running yet...
+			gameMode = "running";		//change the "mode" back to "running"
+			timerAnimation.play();			//& start the countdown
 		}
 		else if(gameMode.equals("running")){
 			switch (e.getCode()) {
@@ -199,7 +210,8 @@ public class EvenOdd extends Application {
 	}
 	
 	public void verifyGameState(){
-		setUpAnimation();		//sets up the animation
+		setUpAnimation();		//sets up the animation, 
+		
 		
 //		if (gameMode.equals("running")) {
 //			mainGamePane.requestFocus();
@@ -302,7 +314,7 @@ public class EvenOdd extends Application {
 		scoreLabel.setText(finalScore + "");
 		bonusTimeCounter++;		//increment the bonus time counter as well as finalScore
 		if(bonusTimeCounter == 10){
-			bonusTimeLabel.setText("+10 Sec");
+			bonusTimeAnimation.play();			//displays a bonus message for for a few seconds, then diappear. Set's the text in a label that is blank most of the time (essentially bonusTimeLabel.setText("+10 Sec"); ). Animation only cycles once, so it's ok that I call "play()" multiple times since the previous cycle should have finished& they shouldn't overlap  
 			System.out.println("+10 Sec");
 			timeRemaining += 10;			//add 10 to time remaining. Since the animation is still running, this new time will be updated in 10 miliseconds when updateTimer is called
 			bonusTimeCounter = 0;		//reset bonus
