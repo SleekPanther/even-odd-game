@@ -46,7 +46,8 @@ public class EvenOdd extends Application {
 	private int finalScore = 0;			//holds the RUNNING TOTAL of their score for each game played. Reset on each game (maybe work in highscore somehow...)
 	private int bonusTimeCounter = 0;
 	
-	private double timeRemaining = 40;
+	private final int INITIAL_TIME_REMAINING = 40;
+	private double timeRemaining = INITIAL_TIME_REMAINING;
 	private DecimalFormat dFormatter = new DecimalFormat("0.0");		//always want 2 decimals, so need formatter & convert timeRemaining to string before displaying to avoid rounding 9.80 to just 9.8
 	
 	private int randomNumber = 10;
@@ -185,7 +186,7 @@ public class EvenOdd extends Application {
         	bonusTimeLabel.setText("");
         };
         // animation for bonus message. 1st keyframe is to display message & time=0. 2nd keyframe is to set text to empty, & this lasts length of BONUS_TIME_MILLISEC. Impossible to detect changes on INDEFINITE, but works for just 1 cycle 
-        bonusTimeAnimation = new Timeline(new KeyFrame(Duration.millis(0), bonusTimeEventHandler),  new KeyFrame(Duration.millis(2000), bonusTimeEventHandler2) );
+        bonusTimeAnimation = new Timeline(new KeyFrame(Duration.millis(0), bonusTimeEventHandler),  new KeyFrame(Duration.millis(BONUS_TIME_MILLISEC), bonusTimeEventHandler2) );
         bonusTimeAnimation.setCycleCount(1);		//only repeat the 
     }
 	
@@ -234,11 +235,15 @@ public class EvenOdd extends Application {
 	}
 	
 	public void startAGame(){
+		finalScore = 0;							//reset scores & timer (doesn't really apply for the very 1st game)
+		bonusTimeCounter = 0;
+		timeRemaining = INITIAL_TIME_REMAINING;
 		
 		primaryStage.setScene(gameScene);		//make sure the scene switches from "gameOverScene" when a new game starts. (If it's the first time the game is being played, this line is already executed in setUPGUI, so it's a little redundant, but it doens't matter)
 		gameMode = "running";		//change the "mode" back to "running"
 		timerAnimation.play();			//& start the countdown
 		
+		scoreLabel.setText(finalScore + "");
 		randNumLabel.setStyle(" -fx-text-fill:lime; -fx-font-size: 100px");		//make it bigger since it only holds a few digits now, but also duplicate tet color
 		displayNewNumber();
 	}
@@ -329,18 +334,13 @@ public class EvenOdd extends Application {
 		randNumLabel.setText(randomNumber + "");		//update label text
 	}
 	
+	/**
+	 * Switches the scene to "gameOverScene" & sets the focus so the kayPresses register with the current pane
+	 * Hitting any button will now call identifyKeyPress which has a case to check if the game is over & will start a new game
+	 */
 	public void showGameOver(){
 		primaryStage.setScene(gameOverScene);
 		setPaneFocus();		//sets the focus to the appropriate pane
-	}
-	
-	public void restartGame(){	//possibly need params, or just do something magical & wipe everything, maybe just call the "set up game"
-		finalScore = 0;
-		//primaryStage.setScene(gameScene);
-		/* most important= switch scene, then start the countdown
-		maybe don't even initialize the fields with text until here, then can call this from setUpGUI
-		or since labels text can be set when doing  =  new Label("text"), maybe it's good to have placeholder	*/
-		
 	}
 
 
