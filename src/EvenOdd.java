@@ -34,15 +34,20 @@ public class EvenOdd extends Application {
 	
 	private Scene gameOverScene;
 	private Label timeLabel;
+	private VBox gameOverPane;
+	private GridPane mainGamePane;
+	private Label randNumLabel;
 	
 	private int finalScore = 0;			//holds the RUNNING TOTAL of their score for each game played. Reset on each game (maybe work in highscore somehow...)
 	
-	private double timeRemaining = 10;
+	private double timeRemaining = 40;
 	private DecimalFormat dFormatter = new DecimalFormat("0.0");		//always want 2 decimals, so need formatter & convert timeRemaining to string before displaying to avoid rounding 9.80 to just 9.8
 	
-	private int randomNumber = 1;
+	private int randomNumber = 10;
+	//private int randomNumber = (int)(Math.random()*10);
 	private Random generator = new Random();
-	private final int RANDOM_UPPER_BOUND = 101;			//generate random number between 0 & 1 less than this number 
+	private final int RANDOM_UPPER_BOUND = 101;			//generate random number between 0 & 1 less than this number
+	private String currentUserGuess;		//need to initialize? or would that cause problems if they didn't press any keys...
 	
 	private String gameMode = "running";		//"waiting" = start screen, "running"=currently being played & new number show up, "over"=switch scene & display score
 	private boolean isGameOver = false;
@@ -68,10 +73,10 @@ public class EvenOdd extends Application {
 
 	public void setUpGUI(){		//needs to show a GUI & be waiting for SPACE to start
 		System.out.println("set up game");
-		isUserGuessCorrect();
+				//isUserGuessCorrect();
 		//http://stackoverflow.com/questions/19174983/javafx-layout-that-scales-with-parent
 		
-		GridPane mainGamePane = new GridPane();
+		mainGamePane = new GridPane();
 		mainGamePane.setStyle("-fx-background-color:white");
 		StackPane gameStatusTopbar = new StackPane();
 		
@@ -97,8 +102,8 @@ public class EvenOdd extends Application {
 		numberArea.setStyle("-fx-background-color:black");
 		
 		
-		Label randNumLabel = new Label( (int)(Math.random()*10) + "");
-		randNumLabel.setText("Press any key to start");
+		randNumLabel = new Label( randomNumber + "");
+		//randNumLabel.setText("Press any key to start");
 		randNumLabel.setStyle("-fx-background-color:darkblue; -fx-text-fill:lime; -fx-font-size: 30px");
 		//randNumLabel.setStyle("-fx-font-size: 100px");		//make it biger in startAGame
 		numberArea.getChildren().add(randNumLabel);
@@ -121,7 +126,7 @@ public class EvenOdd extends Application {
 		oddPane.getChildren().add(oddLabel);
 		GridPane evenOddPane = new GridPane();	//add thing in constructor here
 		evenOddPane.setStyle("-fx-background-color:purple");
-		evenOddPane.addRow(0, evenPane, oddPane);
+		evenOddPane.addRow(0, oddPane, evenPane);
 		FlowPane evenOddContainer = new FlowPane();
 		//StackPane evenOddContainer = new StackPane();
 		evenOddContainer.getChildren().add(evenOddPane);
@@ -136,7 +141,7 @@ public class EvenOdd extends Application {
 		
 		
 		//stare creating "Game Over" scene --------------------------------------------------------------
-		VBox gameOverPane = new VBox();
+		gameOverPane = new VBox();
 		gameOverPane.setPrefSize(windowWidth, windowHeight);
 		gameOverPane.setAlignment(Pos.CENTER);
 		Label gameOverLabel = new Label("game over");
@@ -153,20 +158,7 @@ public class EvenOdd extends Application {
         //primaryStage.setResizable(false);		//this makes the window NON-resizable. For some reason this messed up my window size & "grew" by 12 pixels on the bottom & right edges of the black pane
         primaryStage.show();
         
-        //gameMode = "over";
-        if(gameMode.equals("over") ){
-        	showGameOver();
-        	gameOverPane.requestFocus();
-        	gameOverPane.setOnKeyPressed(e -> { 
-    			identifyKeyPress(e);
-    		});
-        }
-        else{
-        	mainGamePane.requestFocus();
-            mainGamePane.setOnKeyPressed(e -> { 
-    			identifyKeyPress(e);
-    		});
-        }
+        //used to be requesting focus here
         
         startAGame();		//start a game once the GUI is set up
 	}
@@ -183,18 +175,22 @@ public class EvenOdd extends Application {
 	
 	public void identifyKeyPress(KeyEvent e){
 		//switch cases for left/right
-		System.out.println("keypress");
+		System.out.println("keypress main method");
 		
 		if(gameMode.equals("waiting") || gameMode.equals("over")){
 			//start new game
 		}
 		else if(gameMode.equals("running")){
 			switch (e.getCode()) {
-            case LEFT:
-            	System.out.println("left");
+            case LEFT:		//they pressed the left arrow, so set the guess to "odd" & call method to check if correct
+            	System.out.println("left run");
+            	currentUserGuess = "ODD";
+            	isUserGuessCorrect();
                 break;
-            case RIGHT:
-            	System.out.println("Right");
+            case RIGHT:		//they pressed the right arrow, so set the guess to "odd" & call method to check if correct
+            	System.out.println("Right run");
+            	currentUserGuess = "EVEN";
+            	isUserGuessCorrect();
                 break;
 			}
 		}
@@ -202,13 +198,44 @@ public class EvenOdd extends Application {
 	
 	public void startAGame(){
 		setUpAnimation();		//sets up the animation
+		
+		if( gameMode.equals("running") ){
+			mainGamePane.requestFocus();
+			mainGamePane.setOnKeyPressed(e -> {
+				identifyKeyPress(e);
+			});
+		}
+		System.out.println("aft run 1st");
+		
+		System.out.println("aft run loop");
+		 if(gameMode.equals("over") ){
+	        	showGameOver();
+	        	gameOverPane.requestFocus();
+	        	gameOverPane.setOnKeyPressed(e -> { 
+	    			identifyKeyPress(e);
+	    		});
+	        }
+		
+		//gameMode = "over";
+//        if(gameMode.equals("over") ){
+//        	showGameOver();
+//        	gameOverPane.requestFocus();
+//        	gameOverPane.setOnKeyPressed(e -> { 
+//    			identifyKeyPress(e);
+//    		});
+//        }
+//        else{
+//        		mainGamePane.requestFocus();
+//            mainGamePane.setOnKeyPressed(e -> { 
+//    				identifyKeyPress(e);
+//    		});
+//        }
 	}
 	
 	public void startAGame0(){	//called by pressing any key while in "waiting" mode
 		
 		boolean isGameOver = false;
 		Random randomGenerator = new Random();
-		
 		randomGenerator.setSeed(System.currentTimeMillis());		//random seed based on time
 		
 		Scanner scan = new Scanner(System.in);
@@ -228,9 +255,6 @@ public class EvenOdd extends Application {
 			}
 		}
 		
-		while(timeRemaining >0){
-			//actually run hte game
-		}
 	}
 	
 	public void updateTimer(){		
@@ -246,6 +270,19 @@ public class EvenOdd extends Application {
 	}
 	
 	public boolean isUserGuessCorrect(){
+		if( currentUserGuess.equals("EVEN") && (randomNumber%2==0 ) ){
+			System.out.println(randomNumber + "  is even, correct");
+			displayNewNumber();
+		}
+		else if( currentUserGuess.equals("ODD") && (randomNumber%2 !=0 ) ){
+			System.out.println(randomNumber + "  is odd, correct");
+			displayNewNumber();
+		}
+		else{
+			gameMode = "over";
+			System.out.println("fail");
+		}
+		
 //		tetrisBoard.setOnKeyPressed(e -> {		//tetrisBoard=pane
 //        	System.out.println(e.getCode());	//print the key code. 
 	//}
@@ -259,17 +296,19 @@ public class EvenOdd extends Application {
 		Space=start should only happen if the game isn't running (i.e. it's the splash screen)
 		 */
 		
-		System.out.println(randomNumber);
+		
 		return true;
 	}
 	
 	public void displayNewNumber(){
 		//some gui stuff to pick a new random & display it. pick new int from generator & display it
-		//generator.nextnt(RANDOM_UPPER_BOUND);		//between 0 & 101
+		randomNumber = generator.nextInt(RANDOM_UPPER_BOUND);		//between 0 & 101
+		randNumLabel.setText(randomNumber + "");
 	}
 	
 	public void showGameOver(){
-		primaryStage.setScene(gameOverScene);
+		System.out.println("overrrrrr");
+		//primaryStage.setScene(gameOverScene);
 		
 		//turn off all keypresses & wait for "R" 
 		//reStartGame()
