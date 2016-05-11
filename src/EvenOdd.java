@@ -1,7 +1,6 @@
 //Consolidate/organize imports?
 import java.text.DecimalFormat;
 import java.util.Random;
-import java.util.Scanner;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -11,22 +10,26 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
+/**
+ * This game replicates a simple app which displays a random number and the user must decide if it's even or odd.
+ * A time limit is imposed, & they get bonus time if they get 10 correct in a row.
+ * The game ends immediately when they guess incorrectly
+ * 
+ *  -------------GENERAL FLOW OF THE PROGRAM--------------
+ *  
+ * @author Noah Patullo
+ */
 public class EvenOdd extends Application {
 	private final int windowWidth = 360;		//constants for size of the window
-	private final int windowHeight = 500;
+	private final int windowHeight = 440;
 	private Stage primaryStage;
 	//need to bring all labels & nodes outside as fields
 	private static final double MILLISEC = 100;				//update timer every 100 ms, or 10th of a second
@@ -51,8 +54,7 @@ public class EvenOdd extends Application {
 	private double timeRemaining = INITIAL_TIME_REMAINING;
 	private DecimalFormat dFormatter = new DecimalFormat("0.0");		//always want 2 decimals, so need formatter & convert timeRemaining to string before displaying to avoid rounding 9.80 to just 9.8
 	
-	private int randomNumber = 10;
-	//private int randomNumber = (int)(Math.random()*10);		//initialize just in case, but its value should be set in displayNewNumber @ the start of a game 
+	private int randomNumber = (int)(Math.random()*10);		//initialize just in case, but its value should be set in displayNewNumber @ the start of a game 
 	private Random generator = new Random();
 	private final int RANDOM_UPPER_BOUND = 101;			//generate random number between 0 & 1 less than this number
 	private String currentUserGuess;		//need to initialize? or would that cause problems if they didn't press any keys...
@@ -79,12 +81,6 @@ public class EvenOdd extends Application {
 	public void setUpGUI(){
 		mainGamePane = new GridPane();
 		mainGamePane.setStyle("-fx-background-color:white");
-		StackPane gameStatusTopbar = new StackPane();
-		
-		Label gameStatusLabel = new Label("Might not need");
-		gameStatusTopbar.getChildren().add(gameStatusLabel);
-		gameStatusTopbar.setStyle("-fx-background-color:pink");
-		
 		
 		//timer & random numbers
 		VBox timeScorePane = new VBox();
@@ -133,18 +129,18 @@ public class EvenOdd extends Application {
 		//StackPane evenOddContainer = new StackPane();
 		evenOddContainer.getChildren().add(evenOddPane);
 		
-		mainGamePane.addColumn(0, gameStatusTopbar, timeScorePane, numberArea, evenOddContainer);
+		mainGamePane.addColumn(0, timeScorePane, numberArea, evenOddContainer);
 //		mainGamePane.add(gameStatusTopbar, 0, 0);
 //		mainGamePane.add(evenOddContainer,0,2);
 		
-		mainGamePane.setPrefSize(windowWidth, windowHeight);
+		//mainGamePane.setPrefSize(windowWidth, windowHeight);
 		gameScene = new Scene(mainGamePane);
 		
 		
 		
 		//stare creating "Game Over" scene --------------------------------------------------------------
 		gameOverPane = new VBox();
-		gameOverPane.setPrefSize(windowWidth, windowHeight);
+		//gameOverPane.setPrefSize(windowWidth, windowHeight);
 		gameOverPane.setAlignment(Pos.TOP_CENTER);
 		gameOverPane.setStyle("-fx-background-color: gold;");
 		GridPane finalScorePane = new GridPane();
@@ -167,7 +163,9 @@ public class EvenOdd extends Application {
 		
 		primaryStage.setTitle("Even Odd");
         primaryStage.setScene(gameScene);		//sets the initial scene when the game is "waiting". Can easily be changed to gameOverScene to test GUI
-        //primaryStage.setResizable(false);		//this makes the window NON-resizable. For some reason this messed up my window size & "grew" by 12 pixels on the bottom & right edges of the black pane
+        primaryStage.setHeight(windowHeight);
+        primaryStage.setWidth(windowWidth);
+        primaryStage.setResizable(false);		//this makes the window NON-resizable.
         primaryStage.show();
         
         
@@ -355,6 +353,5 @@ public class EvenOdd extends Application {
 		primaryStage.setScene(gameOverScene);
 		setPaneFocus();		//sets the focus to the appropriate pane, or keys would still be registering on the mainGamePane
 	}
-
 
 }
