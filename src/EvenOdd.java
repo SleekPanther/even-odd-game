@@ -29,7 +29,9 @@ public class EvenOdd extends Application {
 	private Stage primaryStage;
 	//need to bring all labels & nodes outside as fields
 	private static final double MILLISEC = 100;		//update timer every 100 ms, or 10th of a second
-	private Timeline animation;									//timeline is called every MILISEC to update the contents of the timer label & count down the time 
+	private Timeline timerAnimation;									//timeline is called every MILISEC to update the contents of the timer label & count down the time
+	private static final double BONUS_TIME_MILLISEC = 2000;		//display bonus message for 2 seconds
+	private Timeline bonusTimeAnimation;
 	
 	private Scene gameOverScene;
 	private Label timeLabel;
@@ -37,6 +39,7 @@ public class EvenOdd extends Application {
 	private GridPane mainGamePane;
 	private Label randNumLabel;
 	private Label scoreLabel;
+	private Label bonusTimeLabel;
 	
 	private int finalScore = 0;			//holds the RUNNING TOTAL of their score for each game played. Reset on each game (maybe work in highscore somehow...)
 	private int bonusTimeCounter = 0;
@@ -50,30 +53,26 @@ public class EvenOdd extends Application {
 	private final int RANDOM_UPPER_BOUND = 101;			//generate random number between 0 & 1 less than this number
 	private String currentUserGuess;		//need to initialize? or would that cause problems if they didn't press any keys...
 	
-	private String gameMode = "running";		//"waiting" = start screen, "running"=currently being played & new number show up, "over"=switch scene & display score
+	private String gameMode = "waiting";		//"waiting" = start screen, "running"=currently being played & new number show up, "over"=switch scene & display score
 	private boolean isGameOver = false;
 	
 	public EvenOdd(){	//constructor
-		
 	}
 	
 	@Override
 	public void start(Stage paramStage) throws Exception {
-		primaryStage = paramStage;
-		setUpGUI();		
-		
+		primaryStage = paramStage;		//set parameter equal to field. This way other methods like setUpGUI can add & remove things from primaryStage
+		setUpGUI();		//call method which creates the GUI, and then calls a succession of other methods which essentially start the gameplay
 	}
 	
 	public static void main(String[] args) {
-//		EvenOdd game = new EvenOdd();
-//		game.isUserGuessCorrect();
-		
 		Application.launch(args);		//mostly optional for editors that don't natively support JavaFX
 	}
-
-	public void setUpGUI(){		//needs to show a GUI & be waiting for SPACE to start
-		System.out.println("set up game");
-				//isUserGuessCorrect();
+	
+	/*
+	 * Create a GUI, then calls subsequent methods to actually start the gameplay
+	 */
+	public void setUpGUI(){
 		//http://stackoverflow.com/questions/19174983/javafx-layout-that-scales-with-parent
 		
 		mainGamePane = new GridPane();
@@ -85,17 +84,19 @@ public class EvenOdd extends Application {
 		gameStatusTopbar.setStyle("-fx-background-color:pink");
 		
 		
-		//timer & num
+		//timer & random numers
 		VBox timeScorePane = new VBox();
 		timeScorePane.setAlignment(Pos.CENTER);		//center the entire pane (& therefore all it's nodes)
 		timeScorePane.setStyle("-fx-background-color:green");
 		timeLabel = new Label(timeRemaining + "");		//create label & set text. Kind of unnecessary since updateTimer() is called almost immediately which starts counting down from 10 anyway
 		timeLabel.setStyle("-fx-background-color:blue; -fx-font-size: 50px");
 		timeLabel.setAlignment(Pos.CENTER);
+		bonusTimeLabel = new Label("");		//create label to hold "+10 Sec" when a time bonus is reached
+		bonusTimeLabel.setStyle("-fx-font-size: 20px");
+		bonusTimeLabel.setAlignment(Pos.CENTER);
 		scoreLabel = new Label(finalScore + "");		//set initial score to 0. 
 		scoreLabel.setStyle("-fx-background-color:red; -fx-text-fill: yellow; -fx-font-size: 30px");
-		timeScorePane.getChildren().addAll(timeLabel,scoreLabel);
-		
+		timeScorePane.getChildren().addAll(timeLabel,bonusTimeLabel,scoreLabel);
 		
 		StackPane numberArea = new StackPane();
 		numberArea.setPrefHeight(200);		//maybe just leave this up to the pixel size of "randNumLabel" css fx
@@ -159,17 +160,18 @@ public class EvenOdd extends Application {
         
         //used to be requesting focus here
         
-        startAGame();		//start a game once the GUI is set up
+        verifyGameState();		//start a game once the GUI is set up
 	}
 	
 	private void setUpAnimation() {
-        EventHandler<ActionEvent> eventHandler = (ActionEvent e) -> {		// Create a handler. (what to do when the timeline "updates")
+        EventHandler<ActionEvent> timerEventHandler = (ActionEvent e) -> {		// Create a handler. (what to do when the timeline "updates")
         	updateTimer();
         };
         // Create an animation for "countdown timer"
-        animation = new Timeline(new KeyFrame(Duration.millis(MILLISEC), eventHandler));
-        animation.setCycleCount(Timeline.INDEFINITE);
-        animation.play();
+        timerAnimation = new Timeline(new KeyFrame(Duration.millis(MILLISEC), timerEventHandler));
+        timerAnimation.setCycleCount(Timeline.INDEFINITE);
+        
+        
     }
 	
 	public void identifyKeyPress(KeyEvent e){
@@ -177,7 +179,8 @@ public class EvenOdd extends Application {
 		System.out.println("keypress main method");
 		
 		if(gameMode.equals("waiting") || gameMode.equals("over")){
-			//start new game
+			gameMode = "running";
+			timerAnimation.play();
 		}
 		else if(gameMode.equals("running")){
 			switch (e.getCode()) {
@@ -195,40 +198,39 @@ public class EvenOdd extends Application {
 		}
 	}
 	
-	public void startAGame(){
+	public void verifyGameState(){
 		setUpAnimation();		//sets up the animation
 		
-		if( gameMode.equals("running") ){
+//		if (gameMode.equals("running")) {
+//			mainGamePane.requestFocus();
+//			mainGamePane.setOnKeyPressed(e -> {
+//				identifyKeyPress(e);
+//			});
+//		}
+//		System.out.println("aft run 1st");
+//
+//		System.out.println("aft run loop");
+//		if (gameMode.equals("over")) {
+//			showGameOver();
+//			gameOverPane.requestFocus();
+//			gameOverPane.setOnKeyPressed(e -> {
+//				identifyKeyPress(e);
+//			});
+//		}
+		
+		//gameMode = "over";
+		if (gameMode.equals("over")) {
+			showGameOver();
+			gameOverPane.requestFocus();
+			gameOverPane.setOnKeyPressed(e -> {
+				identifyKeyPress(e);
+			});
+		} else {
 			mainGamePane.requestFocus();
 			mainGamePane.setOnKeyPressed(e -> {
 				identifyKeyPress(e);
 			});
 		}
-		System.out.println("aft run 1st");
-		
-		System.out.println("aft run loop");
-		 if(gameMode.equals("over") ){
-	        	showGameOver();
-	        	gameOverPane.requestFocus();
-	        	gameOverPane.setOnKeyPressed(e -> { 
-	    			identifyKeyPress(e);
-	    		});
-	        }
-		
-		//gameMode = "over";
-//        if(gameMode.equals("over") ){
-//        	showGameOver();
-//        	gameOverPane.requestFocus();
-//        	gameOverPane.setOnKeyPressed(e -> { 
-//    			identifyKeyPress(e);
-//    		});
-//        }
-//        else{
-//        		mainGamePane.requestFocus();
-//            mainGamePane.setOnKeyPressed(e -> { 
-//    				identifyKeyPress(e);
-//    		});
-//        }
 	}
 	
 	public void startAGame0(){	//called by pressing any key while in "waiting" mode
@@ -300,7 +302,7 @@ public class EvenOdd extends Application {
 		scoreLabel.setText(finalScore + "");
 		bonusTimeCounter++;		//increment the bonus time counter as well as finalScore
 		if(bonusTimeCounter == 10){
-			//bonusTimeLabel.setText("+10 Sec");
+			bonusTimeLabel.setText("+10 Sec");
 			System.out.println("+10 Sec");
 			timeRemaining += 10;			//add 10 to time remaining. Since the animation is still running, this new time will be updated in 10 miliseconds when updateTimer is called
 			bonusTimeCounter = 0;		//reset bonus
