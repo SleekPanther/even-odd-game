@@ -9,6 +9,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
@@ -57,12 +58,13 @@ public class EvenOdd extends Application {
 	private Label randNumLabel;
 	private Label scoreLabel;
 	private Label bonusTimeLabel;
+	private Label actualFinalScore;
 	
 	
 	private int finalScore = 0;			//holds the RUNNING TOTAL of their score for each game played. Reset on each game (maybe work in highscore somehow...)
 	private int bonusTimeCounter = 0;
 	
-	private final int INITIAL_TIME_REMAINING = 40;
+	private final int INITIAL_TIME_REMAINING = 10;
 	private double timeRemaining = INITIAL_TIME_REMAINING;
 	private DecimalFormat dFormatter = new DecimalFormat("0.0");		//always want 2 decimals, so need formatter & convert timeRemaining to string before displaying to avoid rounding 9.80 to just 9.8
 	
@@ -102,7 +104,7 @@ public class EvenOdd extends Application {
 		//timer & random numbers
 		VBox timeScorePane = new VBox();
 		timeScorePane.setAlignment(Pos.CENTER);		//center the entire pane (& therefore all it's nodes)
-		timeScorePane.setStyle("-fx-background-color:green");
+		timeScorePane.setStyle("-fx-background-color: lightyellow");
 		timeLabel = new Label(timeRemaining + "");		//create label & set text. Kind of unnecessary since updateTimer() is called almost immediately which starts counting down from 10 anyway
 		timeLabel.setStyle("-fx-background-color:blue; -fx-font-size: 50px");
 		timeLabel.setAlignment(Pos.CENTER);
@@ -168,9 +170,9 @@ public class EvenOdd extends Application {
 		Rectangle fillerRect1 = new Rectangle(50, 0, Color.TRANSPARENT);		//this "spacer" rectangle has width, but is 0px tall & transparent, so just there to provide space on the left 
 		Label finalScoreLbl = new Label("Score: ");
 		finalScoreLbl.setStyle("-fx-font-size: 30px; ");
-		Label actualFinalScore = new Label("10");
+		actualFinalScore = new Label(finalScore + "");
 		actualFinalScore.setStyle("-fx-font-size: 50px; ");
-		Label restartInstructionsLbl = new Label("Press any key to restart");
+		Label restartInstructionsLbl = new Label("Press SPACE to restart");
 		restartInstructionsLbl.setStyle("-fx-font-size: 20px");
 		finalScorePane.addColumn(0, fillerRect1);
 		finalScorePane.addColumn(1, finalScoreLbl, actualFinalScore, restartInstructionsLbl);
@@ -232,7 +234,7 @@ public class EvenOdd extends Application {
 	 * @param e the key that was pressed (so e.getCode() can be used to find the exact key)
 	 */
 	public void identifyKeyPress(KeyEvent e){
-		if(gameMode.equals("waiting") || gameMode.equals("over")){		//if the game ISN't running yet...
+		if(gameMode.equals("waiting")){		//if the game ISN't running yet...
 			startAGame();
 		}
 		else if(gameMode.equals("running")){
@@ -246,7 +248,12 @@ public class EvenOdd extends Application {
             	isUserGuessCorrect();
                 break;
 			}
-		}//end else
+		}
+		else if( gameMode.equals("over") ){			//if game is over, only want to restrart when they press SPACE (otherwise they might accidentally hit another arrow key & miss their final score/gameOver screen)
+			if( e.getCode() == KeyCode.SPACE  ){
+				startAGame();
+			}
+		}
 	}
 	
 	/**
@@ -347,6 +354,7 @@ public class EvenOdd extends Application {
 	 */
 	public void showGameOver(){
 		primaryStage.setScene(gameOverScene);
+		actualFinalScore.setText(finalScore +"");
 		setPaneFocus();		//sets the focus to the appropriate pane, or keys would still be registering on the mainGamePane
 	}
 
