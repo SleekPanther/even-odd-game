@@ -20,6 +20,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -144,20 +145,31 @@ public class EvenOdd extends Application {
 		//stare creating "Game Over" scene --------------------------------------------------------------
 		gameOverPane = new VBox();
 		gameOverPane.setPrefSize(windowWidth, windowHeight);
-		gameOverPane.setAlignment(Pos.CENTER);
-		Label gameOverLabel = new Label("game over");
+		gameOverPane.setAlignment(Pos.TOP_CENTER);
+		gameOverPane.setStyle("-fx-background-color: gold;");
+		GridPane finalScorePane = new GridPane();
+		finalScorePane.setStyle("-fx-background-color: yellow");
+		Label gameOverLabel = new Label("Game Over");
+		gameOverLabel.setStyle("-fx-font-size: 50px; ");
+		gameOverLabel.setAlignment(Pos.BASELINE_RIGHT);
+		Rectangle fillerRect1 = new Rectangle(50, 0, Color.TRANSPARENT);		//this "spacer" rectangle has width, but is 0px tall & transparent, so just there to provide space on the left 
 		Label finalScoreLbl = new Label("Score: ");
-		Label actualFinalScore = new Label("100...");
+		finalScoreLbl.setStyle("-fx-font-size: 30px; ");
+		Label actualFinalScore = new Label("10");
 		actualFinalScore.setStyle("-fx-font-size: 50px; ");
-		gameOverPane.getChildren().addAll(gameOverLabel,finalScoreLbl,actualFinalScore);
+		Label restartInstructionsLbl = new Label("Press any key to restart");
+		restartInstructionsLbl.setStyle("-fx-font-size: 20px");
+		finalScorePane.addColumn(0, fillerRect1);
+		finalScorePane.addColumn(1, finalScoreLbl, actualFinalScore, restartInstructionsLbl);
+		gameOverPane.getChildren().addAll(gameOverLabel, finalScorePane);
 		gameOverScene = new Scene(gameOverPane);
 		//end creating game over scene -------------------------------------------------------------------
 		
-		
 		primaryStage.setTitle("Even Odd");
-        primaryStage.setScene(gameScene);
+        primaryStage.setScene(gameScene);		//sets the initial scene when the game is "waiting". Can easily be changed to gameOverScene to test GUI
         //primaryStage.setResizable(false);		//this makes the window NON-resizable. For some reason this messed up my window size & "grew" by 12 pixels on the bottom & right edges of the black pane
         primaryStage.show();
+        
         
         setUpAnimation();			//only need to call once!
         setUpKeyAssociations();	//associate both panes to call identifyKeypress() when a key is pressed 
