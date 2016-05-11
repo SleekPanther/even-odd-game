@@ -59,7 +59,7 @@ public class EvenOdd extends Application {
 	private String gameMode = "waiting";		//"waiting" = start screen, "running"=currently being played & new number show up, "over"=switch scene & display score
 	private boolean isGameOver = false;
 	
-	public EvenOdd(){	//constructor
+	public EvenOdd(){	//constructor unnecessary?
 	}
 	
 	@Override
@@ -73,11 +73,9 @@ public class EvenOdd extends Application {
 	}
 	
 	/*
-	 * Create a GUI, then calls subsequent methods to actually start the gameplay
+	 * Create a GUI then wait for keyPresse to start gameplay 
 	 */
 	public void setUpGUI(){
-		//http://stackoverflow.com/questions/19174983/javafx-layout-that-scales-with-parent
-		
 		mainGamePane = new GridPane();
 		mainGamePane.setStyle("-fx-background-color:white");
 		StackPane gameStatusTopbar = new StackPane();
@@ -113,10 +111,10 @@ public class EvenOdd extends Application {
 		numberArea.getChildren().add(randNumLabel);
 		
 		
-		Label evenLabel = new Label("Even \n(left)");
-		evenLabel.setStyle("-fx-background-color:white");
-		Label oddLabel = new Label("Odd \n(right)");
+		Label oddLabel = new Label("Odd \n(left)");
 		oddLabel.setStyle("-fx-background-color:white");
+		Label evenLabel = new Label("Even \n(right)");
+		evenLabel.setStyle("-fx-background-color:white");
 		//FlowPane evenPane = new FlowPane();
 		StackPane evenPane = new StackPane();
 		evenPane.setPrefWidth(windowWidth/2.0);
@@ -161,8 +159,6 @@ public class EvenOdd extends Application {
         //primaryStage.setResizable(false);		//this makes the window NON-resizable. For some reason this messed up my window size & "grew" by 12 pixels on the bottom & right edges of the black pane
         primaryStage.show();
         
-        //used to be requesting focus here
-        
         setUpAnimation();			//only need to call once!
         setUpKeyAssociations();	//associate both panes to call identifyKeypress() when a key is pressed 
         setPaneFocus();				//start a game once the GUI is set up. Calls subsequent methods once keypresses occur
@@ -194,7 +190,7 @@ public class EvenOdd extends Application {
 	 * Associate a setOnKeyPressed event for both panes. Both respond the same to a key press & call the identifyKeyPress(e) method, passing in the key that was pressed
 	 */
 	public void setUpKeyAssociations(){
-		gameOverPane.setOnKeyPressed(e -> {
+		gameOverPane.setOnKeyPressed(e -> {			//use lambda expression to call a method when ANY key is pressed
 			identifyKeyPress(e);
 		});
 		
@@ -203,6 +199,10 @@ public class EvenOdd extends Application {
 		});
 	}
 	
+	/**
+	 * Find out what key pressed and verify the user's guess is correct if the game is "running", or else start a new game
+	 * @param e the key that was pressed (so e.getCode() can be used to find the exact key)
+	 */
 	public void identifyKeyPress(KeyEvent e){
 		if(gameMode.equals("waiting") || gameMode.equals("over")){		//if the game ISN't running yet...
 			startAGame();
@@ -210,12 +210,10 @@ public class EvenOdd extends Application {
 		else if(gameMode.equals("running")){
 			switch (e.getCode()) {
             case LEFT:		//they pressed the left arrow, so set the guess to "odd" & call method to check if correct
-            	System.out.println("left run");
             	currentUserGuess = "ODD";
             	isUserGuessCorrect();
                 break;
             case RIGHT:		//they pressed the right arrow, so set the guess to "odd" & call method to check if correct
-            	System.out.println("Right run");
             	currentUserGuess = "EVEN";
             	isUserGuessCorrect();
                 break;
@@ -234,18 +232,21 @@ public class EvenOdd extends Application {
 		}
 	}
 	
+	/**
+	 * Starts an initial game as well as resetting score and timer when the game is restarted (so this method can be reused)
+	 */
 	public void startAGame(){
 		finalScore = 0;							//reset scores & timer (doesn't really apply for the very 1st game)
 		bonusTimeCounter = 0;
 		timeRemaining = INITIAL_TIME_REMAINING;
 		
 		primaryStage.setScene(gameScene);		//make sure the scene switches from "gameOverScene" when a new game starts. (If it's the first time the game is being played, this line is already executed in setUPGUI, so it's a little redundant, but it doens't matter)
-		gameMode = "running";		//change the "mode" back to "running"
+		gameMode = "running";		//change the "mode" back to "running" if the game has been restarted (doesn't really apply for the very 1st game)
 		timerAnimation.play();			//& start the countdown
 		
-		scoreLabel.setText(finalScore + "");
+		scoreLabel.setText(finalScore + "");			//set the text of the score (mostly for game restarts)
 		randNumLabel.setStyle(" -fx-text-fill:lime; -fx-font-size: 100px");		//make it bigger since it only holds a few digits now, but also duplicate tet color
-		displayNewNumber();
+		displayNewNumber();		//pick a new number and essentially start the game
 	}
 	
 //	public void startAGame0(){	//called by pressing any key while in "waiting" mode
@@ -340,7 +341,7 @@ public class EvenOdd extends Application {
 	 */
 	public void showGameOver(){
 		primaryStage.setScene(gameOverScene);
-		setPaneFocus();		//sets the focus to the appropriate pane
+		setPaneFocus();		//sets the focus to the appropriate pane, or keys would still be registering on the mainGamePane
 	}
 
 
