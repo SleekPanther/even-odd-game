@@ -162,8 +162,9 @@ public class EvenOdd extends Application {
         
         //used to be requesting focus here
         
-        setUpAnimation();		//only need to call once
-        setSceneFocus();		//start a game once the GUI is set up
+        setUpAnimation();			//only need to call once!
+        setUpKeyAssociations();	//associate both panes to call identifyKeypress() when a key is pressed 
+        setPaneFocus();				//start a game once the GUI is set up. Calls subsequent methods once keypresses occur
 	}
 	
 	/**
@@ -183,15 +184,25 @@ public class EvenOdd extends Application {
         EventHandler<ActionEvent> bonusTimeEventHandler2 = (ActionEvent e) -> {		// handler to set text back to nothing
         	bonusTimeLabel.setText("");
         };
-        // animation from bonus message. 1st keyframe is to display message & time=0. 2nd keyframe is to set text to empty, & this lasts length of BONUS_TIME_MILLISEC. Impossible to detect changes on INDEFINITE, but works for just 1 cycle 
+        // animation for bonus message. 1st keyframe is to display message & time=0. 2nd keyframe is to set text to empty, & this lasts length of BONUS_TIME_MILLISEC. Impossible to detect changes on INDEFINITE, but works for just 1 cycle 
         bonusTimeAnimation = new Timeline(new KeyFrame(Duration.millis(0), bonusTimeEventHandler),  new KeyFrame(Duration.millis(2000), bonusTimeEventHandler2) );
         bonusTimeAnimation.setCycleCount(1);		//only repeat the 
     }
 	
-	public void identifyKeyPress(KeyEvent e){
-		//switch cases for left/right
-		System.out.println("keypress main method");
+	/**
+	 * Associate a setOnKeyPressed event for both panes. Both respond the same to a key press & call the identifyKeyPress(e) method, passing in the key that was pressed
+	 */
+	public void setUpKeyAssociations(){
+		gameOverPane.setOnKeyPressed(e -> {
+			identifyKeyPress(e);
+		});
 		
+		mainGamePane.setOnKeyPressed(e -> {
+			identifyKeyPress(e);
+		});
+	}
+	
+	public void identifyKeyPress(KeyEvent e){
 		if(gameMode.equals("waiting") || gameMode.equals("over")){		//if the game ISN't running yet...
 			startAGame();
 		}
@@ -208,26 +219,23 @@ public class EvenOdd extends Application {
             	isUserGuessCorrect();
                 break;
 			}
-		}
+		}//end else
 	}
 	
-	public void setSceneFocus(){
-		if (gameMode.equals("over")) {
+	/**
+	 * This method sets the focus to the correct pane (Button presses do different things in different game modes, so make sure only 1 pane @ a time accesses the keys)
+	 */
+	public void setPaneFocus(){
+		if (gameMode.equals("over")) {		//if the game is over, gameOverPane should get the focus
 			gameOverPane.requestFocus();
-			gameOverPane.setOnKeyPressed(e -> {
-				identifyKeyPress(e);
-			});
-		} else {
+		} else {					//else case takes care of "running" & "waiting" game modes
 			mainGamePane.requestFocus();
-			mainGamePane.setOnKeyPressed(e -> {
-				identifyKeyPress(e);
-			});
 		}
 	}
 	
 	public void startAGame(){
 		
-		primaryStage.setScene(gameScene);		//make sure the scene switches from "gameOverScene" whena new game starts. (If it's the first time the game is being played, this line is already executed in setUPGUI, so it's a little redundant, but it doens't matter)
+		primaryStage.setScene(gameScene);		//make sure the scene switches from "gameOverScene" when a new game starts. (If it's the first time the game is being played, this line is already executed in setUPGUI, so it's a little redundant, but it doens't matter)
 		gameMode = "running";		//change the "mode" back to "running"
 		timerAnimation.play();			//& start the countdown
 		
@@ -323,7 +331,7 @@ public class EvenOdd extends Application {
 	
 	public void showGameOver(){
 		primaryStage.setScene(gameOverScene);
-		setSceneFocus();		//sets the focus to the appropriate pane
+		setPaneFocus();		//sets the focus to the appropriate pane
 	}
 	
 	public void restartGame(){	//possibly need params, or just do something magical & wipe everything, maybe just call the "set up game"
