@@ -268,25 +268,22 @@ public class EvenOdd extends Application {
 		}
 	}
 	
-	public boolean isUserGuessCorrect(){
-		if( currentUserGuess.equals("EVEN") && (randomNumber%2==0 ) ){
+	public void isUserGuessCorrect(){
+		if( currentUserGuess.equals("EVEN") && (randomNumber%2==0 ) ){		//check if the number is even & their guess matched
 			System.out.println(randomNumber + "  is even, correct");
-			updateScore();
-			displayNewNumber();
+			updateScore();			//increase the score, & potentially add time bonus for 10 in a row
+			displayNewNumber();	//display anew random number
 		}
-		else if( currentUserGuess.equals("ODD") && (randomNumber%2 !=0 ) ){
+		else if( currentUserGuess.equals("ODD") && (randomNumber%2 !=0 ) ){	//check if the number is odd & their guess matched
 			System.out.println(randomNumber + "  is odd, correct");
 			updateScore();
 			displayNewNumber();
 		}
-		else{
+		else{		//if they guessed wrong, end the game 
 			gameMode = "over";	//change the state of the game
 			showGameOver();			//switch scenes if they guess wrong
 		}
 		
-//		tetrisBoard.setOnKeyPressed(e -> {		//tetrisBoard=pane
-//        	System.out.println(e.getCode());	//print the key code. 
-	//}
 		/*
 		 need some basic start method to set up GUI (splash screen, title, "Press SPACE to start")
 		 want to ignore all bu important key presses. Use switch like in Tetris
@@ -296,7 +293,6 @@ public class EvenOdd extends Application {
 		need variable to hold "gameState", use string. "welcome" "running" "over", over=switch scene. in each of the  restart and isUserGuessCorrect methods need to check if game is running. Only execute if it is running
 		Space=start should only happen if the game isn't running (i.e. it's the splash screen)
 		 */
-		return true;
 	}
 	
 	public void updateScore(){
@@ -312,8 +308,11 @@ public class EvenOdd extends Application {
 	}
 	
 	public void displayNewNumber(){
-		//some gui stuff to pick a new random & display it. pick new int from generator & display it
+		int tempOldRand = randomNumber;		//save old value so new value can be compared & make sure the same number isn't picked twice
 		randomNumber = generator.nextInt(RANDOM_UPPER_BOUND);		//between 0 & 101
+		while( randomNumber == tempOldRand){		//if the new pseudoRandom number is the same, pick a new one
+			randomNumber = generator.nextInt(RANDOM_UPPER_BOUND);		//between 0 & 101
+		}
 		randNumLabel.setText(randomNumber + "");		//update label text
 	}
 	
