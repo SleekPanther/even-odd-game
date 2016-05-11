@@ -24,7 +24,19 @@ import javafx.util.Duration;
  * The game ends immediately when they guess incorrectly
  * 
  *  -------------GENERAL FLOW OF THE PROGRAM--------------
- *  
+ *  The class extends application, so start() is called (A main method exists just in case & calls Application.launch(args) )
+ *  setUpGUI() created the labels, scenes & panes for all stages of the game, then calls 3 methods once it's finished
+ *  setUpAnimation() creates timelines for updating the timer (counting down) & displaying a bonus message when the user gets 10 points. Only call this method once
+ *  setUpKeyAssociations() assigns key events to both panes
+ *  setPaneFocus() sets the focus to the correct pane so the appropriate key pressed work
+ *  The game initially waits for the user to press a key
+ *  identifyKeyPress() determines what key is pressed and what to do with that information (if the game is running it checks the user's guess & if it's "over" or "waiting" a new game is started
+ *  startAGame() starts the first game & displays a new random number, but also resets score and timer when the game is restarted
+ *  updateTimer() is called by the animation timeline & creates the countdown clock. Changes to game over if no time remains
+ *  displayNewNumber() creates a new random number (different from the previous one)
+ *  isUserGuessCorrect() is called on every keypress when the game is "running". Checks if the keypress matches even/odd, update the score & display a new number. Can end the game if they guess wrong
+ *  updateScore() increases overall score & displays bonus message if they got 10 in a row correct
+ *  showGameOver() switches scenes & prompts the use to restart
  * @author Noah Patullo
  */
 public class EvenOdd extends Application {
@@ -62,17 +74,22 @@ public class EvenOdd extends Application {
 	private String gameMode = "waiting";		//"waiting" = start screen, "running"=currently being played & new number show up, "over"=switch scene & display score
 	private boolean isGameOver = false;
 	
-	public EvenOdd(){	//constructor unnecessary?
-	}
-	
+	//constructor unnecessary
+	/**
+	 * calls setUpGUI to get the game running
+	 */
 	@Override
 	public void start(Stage paramStage) throws Exception {
 		primaryStage = paramStage;		//set parameter equal to field. This way other methods like setUpGUI can add & remove things from primaryStage
 		setUpGUI();		//call method which creates the GUI, and then calls a succession of other methods which essentially start the gameplay
 	}
 	
+	/**
+	 * Since this class extends Application, start() is called so main() is mostly optional for editors that don't natively support JavaFX
+	 * @param args
+	 */
 	public static void main(String[] args) {
-		Application.launch(args);		//mostly optional for editors that don't natively support JavaFX
+		Application.launch(args);
 	}
 	
 	/*
@@ -211,6 +228,7 @@ public class EvenOdd extends Application {
 	
 	/**
 	 * Find out what key pressed and verify the user's guess is correct if the game is "running", or else start a new game
+	 * When game is running, it successfully ignores all keys other than Left/Right arrow
 	 * @param e the key that was pressed (so e.getCode() can be used to find the exact key)
 	 */
 	public void identifyKeyPress(KeyEvent e){
@@ -259,31 +277,10 @@ public class EvenOdd extends Application {
 		displayNewNumber();		//pick a new number and essentially start the game
 	}
 	
-//	public void startAGame0(){	//called by pressing any key while in "waiting" mode
-//		
-//		boolean isGameOver = false;
-//		Random randomGenerator = new Random();
-//		randomGenerator.setSeed(System.currentTimeMillis());		//random seed based on time
-//		
-//		Scanner scan = new Scanner(System.in);
-//		
-//		System.out.println("[ is even ] is odd");
-//		
-//		while(!isGameOver){
-//			isGameOver = true;
-//			int random = randomGenerator.nextInt(100);
-//			System.out.println(random + ": ");
-//			String answer = scan.next();
-//			if( (answer.equals("[")) && (random%2==0) ){
-//				isGameOver = false;
-//			}
-//			if( (answer.equals("]")) && (random%2!=0) ){
-//				isGameOver = false;
-//			}
-//		}
-//		
-//	}
-	
+	/**
+	 * Subtract a small number from the timeRemaining & update the label
+	 * It's called rapidly by the timeline & essentially creates the countdown clock
+	 */
 	public void updateTimer(){		
 		if(timeRemaining>0){			//execute while >0, & the containing block only call this method while gameMode is "running"
 			timeRemaining -= .1;		//decrement by .01 for every 100th of a second
@@ -293,10 +290,25 @@ public class EvenOdd extends Application {
 		}
 		else{		//game is over once time remaining is 0
 			gameMode = "over";
-			showGameOver();	
+			showGameOver();				//make sure to switch the scenes
 		}
 	}
 	
+	/**
+	 * Create a new random number (must be different from the previous one) & display it
+	 */
+	public void displayNewNumber(){
+		int tempOldRand = randomNumber;		//save old value so new value can be compared & make sure the same number isn't picked twice
+		randomNumber = generator.nextInt(RANDOM_UPPER_BOUND);		//between 0 & 101
+		while( randomNumber == tempOldRand){		//if the new pseudoRandom number is the same, pick a new one
+			randomNumber = generator.nextInt(RANDOM_UPPER_BOUND);		//between 0 & 101
+		}
+		randNumLabel.setText(randomNumber + "");		//update label text
+	}
+	
+	/**
+	 * Checks if the keypress matches even/odd, update the score & display a new number. Game is over if they guess wrong, but ignores all keys other than left/right arrow (filtered out in identifyKeyPress)
+	 */
 	public void isUserGuessCorrect(){
 		if( currentUserGuess.equals("EVEN") && (randomNumber%2==0 ) ){		//check if the number is even & their guess matched
 			System.out.println(randomNumber + "  is even, correct");
@@ -312,18 +324,11 @@ public class EvenOdd extends Application {
 			gameMode = "over";	//change the state of the game
 			showGameOver();			//switch scenes if they guess wrong
 		}
-		
-		/*
-		 need some basic start method to set up GUI (splash screen, title, "Press SPACE to start")
-		 want to ignore all bu important key presses. Use switch like in Tetris
-		code scenarios for each important key. LEFT or RIGHT both call the isUserGuessCorrect() method to validate, then it should refresh the display & make another number
-		R   should restart, but bring up dialog
-		SPACE @ the start of the game should call the start method, or something to actually get the game rolling
-		need variable to hold "gameState", use string. "welcome" "running" "over", over=switch scene. in each of the  restart and isUserGuessCorrect methods need to check if game is running. Only execute if it is running
-		Space=start should only happen if the game isn't running (i.e. it's the splash screen)
-		 */
 	}
 	
+	/**
+	 * Increase score. Also has a separate counter which resets if they get 10 correct, then a 10 second bonus is added to timeRemaining & a message is displayed notifying the player of the bonus 
+	 */
 	public void updateScore(){
 		finalScore++;		//increment score
 		scoreLabel.setText(finalScore + "");
@@ -334,15 +339,6 @@ public class EvenOdd extends Application {
 			timeRemaining += 10;			//add 10 to time remaining. Since the animation is still running, this new time will be updated in 10 miliseconds when updateTimer is called
 			bonusTimeCounter = 0;		//reset bonus
 		}
-	}
-	
-	public void displayNewNumber(){
-		int tempOldRand = randomNumber;		//save old value so new value can be compared & make sure the same number isn't picked twice
-		randomNumber = generator.nextInt(RANDOM_UPPER_BOUND);		//between 0 & 101
-		while( randomNumber == tempOldRand){		//if the new pseudoRandom number is the same, pick a new one
-			randomNumber = generator.nextInt(RANDOM_UPPER_BOUND);		//between 0 & 101
-		}
-		randNumLabel.setText(randomNumber + "");		//update label text
 	}
 	
 	/**
