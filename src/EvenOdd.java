@@ -28,10 +28,10 @@ public class EvenOdd extends Application {
 	private final int windowHeight = 500;
 	private Stage primaryStage;
 	//need to bring all labels & nodes outside as fields
-	private static final double MILLISEC = 100;		//update timer every 100 ms, or 10th of a second
+	private static final double MILLISEC = 100;				//update timer every 100 ms, or 10th of a second
 	private Timeline timerAnimation;									//timeline is called every MILISEC to update the contents of the timer label & count down the time
 	private static final double BONUS_TIME_MILLISEC = 2000;		//display bonus message for 2 seconds
-	private Timeline bonusTimeAnimation;
+	private Timeline bonusTimeAnimation;							//timeline for bonus "+10 Sec" message (only called if they get 10 in a row, then on every successive 10
 	
 	private Scene gameOverScene;
 	private Label timeLabel;
@@ -41,6 +41,7 @@ public class EvenOdd extends Application {
 	private Label scoreLabel;
 	private Label bonusTimeLabel;
 	
+	
 	private int finalScore = 0;			//holds the RUNNING TOTAL of their score for each game played. Reset on each game (maybe work in highscore somehow...)
 	private int bonusTimeCounter = 0;
 	
@@ -48,7 +49,7 @@ public class EvenOdd extends Application {
 	private DecimalFormat dFormatter = new DecimalFormat("0.0");		//always want 2 decimals, so need formatter & convert timeRemaining to string before displaying to avoid rounding 9.80 to just 9.8
 	
 	private int randomNumber = 10;
-	//private int randomNumber = (int)(Math.random()*10);
+	//private int randomNumber = (int)(Math.random()*10);		//initialize just in case, but its value should be set in displayNewNumber @ the start of a game 
 	private Random generator = new Random();
 	private final int RANDOM_UPPER_BOUND = 101;			//generate random number between 0 & 1 less than this number
 	private String currentUserGuess;		//need to initialize? or would that cause problems if they didn't press any keys...
@@ -103,8 +104,8 @@ public class EvenOdd extends Application {
 		numberArea.setStyle("-fx-background-color:black");
 		
 		
-		randNumLabel = new Label( randomNumber + "");
-		//randNumLabel.setText("Press any key to start");
+		//randNumLabel = new Label( randomNumber + "");
+		randNumLabel = new Label("Press any key to start");
 		randNumLabel.setStyle("-fx-background-color:darkblue; -fx-text-fill:lime; -fx-font-size: 30px");
 		//randNumLabel.setStyle("-fx-font-size: 100px");		//make it biger in startAGame
 		numberArea.getChildren().add(randNumLabel);
@@ -190,8 +191,7 @@ public class EvenOdd extends Application {
 		System.out.println("keypress main method");
 		
 		if(gameMode.equals("waiting") || gameMode.equals("over")){		//if the game ISN't running yet...
-			gameMode = "running";		//change the "mode" back to "running"
-			timerAnimation.play();			//& start the countdown
+			startAGame();
 		}
 		else if(gameMode.equals("running")){
 			switch (e.getCode()) {
@@ -243,6 +243,14 @@ public class EvenOdd extends Application {
 				identifyKeyPress(e);
 			});
 		}
+	}
+	
+	public void startAGame(){
+		gameMode = "running";		//change the "mode" back to "running"
+		timerAnimation.play();			//& start the countdown
+		
+		randNumLabel.setStyle(" -fx-text-fill:lime; -fx-font-size: 100px");		//make it bigger since it only holds a few digits now, but also duplicate tet color
+		displayNewNumber();
 	}
 	
 	public void startAGame0(){	//called by pressing any key while in "waiting" mode
@@ -331,11 +339,8 @@ public class EvenOdd extends Application {
 	}
 	
 	public void showGameOver(){
-		System.out.println("overrrrrr");
 		primaryStage.setScene(gameOverScene);
 		
-		//turn off all keypresses & wait for "R" 
-		//reStartGame()
 	}
 	
 	public void restartGame(){	//possibly need params, or just do something magical & wipe everything, maybe just call the "set up game"
