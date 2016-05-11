@@ -163,7 +163,7 @@ public class EvenOdd extends Application {
         //used to be requesting focus here
         
         setUpAnimation();		//only need to call once
-        verifyGameState();		//start a game once the GUI is set up
+        setSceneFocus();		//start a game once the GUI is set up
 	}
 	
 	/**
@@ -211,30 +211,8 @@ public class EvenOdd extends Application {
 		}
 	}
 	
-	public void verifyGameState(){
-		//setUpAnimation();		//sets up the animation, 
-		
-		
-//		if (gameMode.equals("running")) {
-//			mainGamePane.requestFocus();
-//			mainGamePane.setOnKeyPressed(e -> {
-//				identifyKeyPress(e);
-//			});
-//		}
-//		System.out.println("aft run 1st");
-//
-//		System.out.println("aft run loop");
-//		if (gameMode.equals("over")) {
-//			showGameOver();
-//			gameOverPane.requestFocus();
-//			gameOverPane.setOnKeyPressed(e -> {
-//				identifyKeyPress(e);
-//			});
-//		}
-		
-		//gameMode = "over";
+	public void setSceneFocus(){
 		if (gameMode.equals("over")) {
-			//showGameOver();
 			gameOverPane.requestFocus();
 			gameOverPane.setOnKeyPressed(e -> {
 				identifyKeyPress(e);
@@ -345,7 +323,7 @@ public class EvenOdd extends Application {
 	
 	public void showGameOver(){
 		primaryStage.setScene(gameOverScene);
-		verifyGameState();		//sets the focus to the appropriate pane
+		setSceneFocus();		//sets the focus to the appropriate pane
 	}
 	
 	public void restartGame(){	//possibly need params, or just do something magical & wipe everything, maybe just call the "set up game"
