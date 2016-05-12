@@ -1,4 +1,4 @@
-//Consolidate/organize imports?
+//Consolidate/organize imports & field variables
 import java.text.DecimalFormat;
 import java.util.Random;
 import javafx.animation.KeyFrame;
@@ -127,9 +127,9 @@ public class EvenOdd extends Application {
 		numberArea.getChildren().add(randNumLabel);
 		
 		
-		Label oddLabel = new Label("Odd \n(left)");
+		Label oddLabel = new Label("     Odd\n(left arrow)");
 		oddLabel.setStyle("-fx-background-color:white");
-		Label evenLabel = new Label("Even \n(right)");
+		Label evenLabel = new Label("       Even\n(right arrow)");
 		evenLabel.setStyle("-fx-background-color:white");
 		//FlowPane evenPane = new FlowPane();
 		StackPane evenPane = new StackPane();
@@ -249,7 +249,7 @@ public class EvenOdd extends Application {
                 break;
 			}
 		}
-		else if( gameMode.equals("over") ){			//if game is over, only want to restrart when they press SPACE (otherwise they might accidentally hit another arrow key & miss their final score/gameOver screen)
+		else if( gameMode.equals("over") ){		//if game is over, only want to restrart when they press SPACE (otherwise they might accidentally hit another arrow key & miss their final score/gameOver screen)
 			if( e.getCode() == KeyCode.SPACE  ){
 				startAGame();
 			}
