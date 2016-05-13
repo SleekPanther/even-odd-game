@@ -386,9 +386,24 @@ public class EvenOdd extends Application {
 	public void readWriteHighScore(){
 		boolean needToUpdateFile = true;		//keep track of if a new score should actually be added (assume true for first game)
 		String scoresFileName = ".CONFIG_DO_NOT_MODIFY";		//file name or path (used to make hidden)
+		String scoresFileName2 = ".CONFIG_DO_NOT_MODIFY2";		//file name or path (used to make hidden)
+		Path highScoreFilePath = Paths.get(scoresFileName);	
 		File scoresFile = new File(scoresFileName);		//create a file object, but doesn't actually make a file
-
-		if (scoresFile.exists()) {		//only read from file if they've played a previous game
+		File scoresFile2 = new File(scoresFileName2);		//create a 2nd file object
+		
+		if( !scoresFile.exists() && !scoresFile2.exists() ){	//if neither file exists, highscore=finalScore, the score of the current game
+			highscore=finalScore;
+		}
+		else if( scoresFile2.exists() ){
+			scoresFile = new File(scoresFileName2);	
+			try {
+				Files.delete(highScoreFilePath);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		else if (scoresFile.exists()) {		//only read from file if they've played a previous game
 			needToUpdateFile = false;		//if the file exists, assume they didn't beat the high score
 			try (Scanner inputFile = new Scanner(scoresFile);) {		//scanner object in try block to autoclose
 				highscore = inputFile.nextInt();		//get the current high score from the file
@@ -401,21 +416,30 @@ public class EvenOdd extends Application {
 				System.out.println("Error reading file");
 			}
 		}
-		else{	//if the file doesn't exist, highscore=finalScore, the score of the current game
-			highscore=finalScore;
-		}
+		
 		actualHighScore.setText(highscore + "");		//display the high score in the label 
 		
 		if(needToUpdateFile){		//only write to the file if a new high score is found. Initially true for 1st game, the "scoresFileR.exists()" is skipped so the 1st score will always be added
-			File scoresFile2 = new File(scoresFileName);		//create a 2nd file object
+			
+			
+//			Path highScoreFilePath = Paths.get(scoresFileName);	
+
 			
 			try (PrintWriter actualScoreFile = new PrintWriter(scoresFile2);) {		//create printWriter in try to autoclose file
 				actualScoreFile.println(highscore);		//print the highscore & overwrite any previous data
 				System.out.println("printed to file");
+				Files.setAttribute(highScoreFilePath, "dos:hidden", true);		//attempt to make it a hidden file
 			}
 			catch(FileNotFoundException e){
-				System.out.println("Error printing to file");
+				System.out.println("Error printing to file2");
+			} catch (IOException e) {
+				System.out.println("Permissions 33");
 			}
+//			try {
+//				Files.delete(highScoreFilePath);
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
 			
 			//Make the scores file hidden. Must be inside this if(needToUpdateFile){} block or else it causes an error on the 1st game (if score is 0, the high scores doesn't need to be updated, but it attempts to change visibility on a nonexistent ile)
 //			Path highScoreFilePath = Paths.get(scoresFileName);		//get the path (even though it's in the same folder), but it MUST be a Path object
