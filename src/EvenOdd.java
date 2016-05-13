@@ -389,7 +389,7 @@ public class EvenOdd extends Application {
 		File scoresFile = new File(scoresFileName);		//create a file object, but doesn't actually make a file
 
 		if (scoresFile.exists()) {		//only read from file if they've played a previous game
-			//needToUpdateFile = false;		//if the file exists, assume they didn't beat the high score
+			needToUpdateFile = false;		//if the file exists, assume they didn't beat the high score
 			try (Scanner inputFile = new Scanner(scoresFile);) {		//scanner object in try block to autoclose
 				highscore = inputFile.nextInt();		//get the current high score from the file
 				if(finalScore > highscore){			//change the highscore if they the current game's score was higher
@@ -407,20 +407,25 @@ public class EvenOdd extends Application {
 		actualHighScore.setText(highscore + "");		//display the high score in the label 
 		
 		if(needToUpdateFile){		//only write to the file if a new high score is found. Initially true for 1st game, the "scoresFileR.exists()" is skipped so the 1st score will always be added
+			
+			
 			try (PrintWriter actualScoreFile = new PrintWriter(scoresFile);) {		//create printWriter in try to autoclose file
 				actualScoreFile.println(highscore);		//print the highscore & overwrite any previous data
+				System.out.println("printed to file");
 			}
 			catch(FileNotFoundException e){
 				System.out.println("Error printing to file");
 			}
 			
 			//Make the scores file hidden. Must be inside this if(needToUpdateFile){} block or else it causes an error on the 1st game (if score is 0, the high scores doesn't need to be updated, but it attempts to change visibility on a nonexistent ile)
-			Path highScorefilePath = Paths.get(scoresFileName);		//get the path (even though it's in the same folder), but it MUST be a Path object
-			try {	        
-		        Files.setAttribute(highScorefilePath, "dos:hidden", true);		//attempt to make it a hidden file
-			} catch (IOException e1) {
-				System.out.println("Uh-Oh, couldn't save high score. Inadequate Permissions");
-			}
+//			Path highScoreFilePath = Paths.get(scoresFileName);		//get the path (even though it's in the same folder), but it MUST be a Path object
+//			try (PrintWriter actualScoreFile = new PrintWriter(scoresFile);) {
+//		        Files.setAttribute(highScoreFilePath, "dos:hidden", true);		//attempt to make it a hidden file
+//			} catch (IOException e1) {
+//				System.out.println("Uh-Oh, couldn't save high score. Inadequate Permissions");
+//			}
+			
+			
 		}//end if(needToUpdateFile)
 	}
 
