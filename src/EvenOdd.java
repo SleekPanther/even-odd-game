@@ -388,22 +388,23 @@ public class EvenOdd extends Application {
 		String scoresFileName = ".CONFIG_DO_NOT_MODIFY";		//file name or path (used to make hidden)
 		String scoresFileName2 = ".CONFIG_DO_NOT_MODIFY2";		//file name or path (used to make hidden)
 		Path highScoreFilePath = Paths.get(scoresFileName);	
+		
 		File scoresFile = new File(scoresFileName);		//create a file object, but doesn't actually make a file
 		File scoresFile2 = new File(scoresFileName2);		//create a 2nd file object
 		
-		if( !scoresFile.exists() && !scoresFile2.exists() ){	//if neither file exists, highscore=finalScore, the score of the current game
-			highscore=finalScore;
-		}
-		else if( scoresFile2.exists() ){
-			scoresFile = new File(scoresFileName2);	
-			try {
-				Files.delete(highScoreFilePath);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+//		if( !scoresFile.exists() && !scoresFile2.exists() ){	//if neither file exists, highscore=finalScore, the score of the current game
+//			highscore=finalScore;
+//		}
+//		else if( scoresFile2.exists() ){
+//			scoresFile = new File(scoresFileName2);	
+//			try {
+//				Files.delete(highScoreFilePath);
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//		}
 		
-		else if (scoresFile.exists()) {		//only read from file if they've played a previous game
+		if (scoresFile.exists()) {		//only read from file if they've played a previous game
 			needToUpdateFile = false;		//if the file exists, assume they didn't beat the high score
 			try (Scanner inputFile = new Scanner(scoresFile);) {		//scanner object in try block to autoclose
 				highscore = inputFile.nextInt();		//get the current high score from the file
@@ -416,16 +417,25 @@ public class EvenOdd extends Application {
 				System.out.println("Error reading file");
 			}
 		}
+		else{
+			highscore=finalScore;
+		}
 		
 		actualHighScore.setText(highscore + "");		//display the high score in the label 
 		
 		if(needToUpdateFile){		//only write to the file if a new high score is found. Initially true for 1st game, the "scoresFileR.exists()" is skipped so the 1st score will always be added
-			
+			if (scoresFile.exists()) {
+				try {
+					Files.delete(highScoreFilePath);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 			
 //			Path highScoreFilePath = Paths.get(scoresFileName);	
 
 			
-			try (PrintWriter actualScoreFile = new PrintWriter(scoresFile2);) {		//create printWriter in try to autoclose file
+			try (PrintWriter actualScoreFile = new PrintWriter(scoresFile);) {		//create printWriter in try to autoclose file
 				actualScoreFile.println(highscore);		//print the highscore & overwrite any previous data
 				System.out.println("printed to file");
 				Files.setAttribute(highScoreFilePath, "dos:hidden", true);		//attempt to make it a hidden file
