@@ -407,9 +407,9 @@ public class EvenOdd extends Application {
 		actualHighScore.setText(highscore + "");		//display the high score in the label 
 		
 		if(needToUpdateFile){		//only write to the file if a new high score is found. Initially true for 1st game, the "scoresFileR.exists()" is skipped so the 1st score will always be added
+			File scoresFile2 = new File(scoresFileName);		//create a 2nd file object
 			
-			
-			try (PrintWriter actualScoreFile = new PrintWriter(scoresFile);) {		//create printWriter in try to autoclose file
+			try (PrintWriter actualScoreFile = new PrintWriter(scoresFile2);) {		//create printWriter in try to autoclose file
 				actualScoreFile.println(highscore);		//print the highscore & overwrite any previous data
 				System.out.println("printed to file");
 			}
