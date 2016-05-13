@@ -54,6 +54,7 @@ public class EvenOdd extends Application {
 	private static final double BONUS_TIME_MILLISEC = 2000;		//display bonus message for 2 seconds
 	private Timeline bonusTimeAnimation;							//timeline for bonus "+10 Sec" message (only called if they get 10 in a row, then on every successive 10
 	
+	//re do Label= Lbl????
 	private Scene gameScene;				//main "game is running" scene
 	private Scene gameOverScene;		//this scene displays the score
 	private Label timeLabel;
@@ -63,6 +64,7 @@ public class EvenOdd extends Application {
 	private Label scoreLabel;
 	private Label bonusTimeLabel;
 	private Label actualFinalScore;
+	private Label actualHighScore;
 	
 	
 	private int finalScore = 0;			//holds the RUNNING TOTAL of their score for each game played. Reset on each game (maybe work in highscore somehow...)
@@ -177,10 +179,14 @@ public class EvenOdd extends Application {
 		finalScoreLbl.setStyle("-fx-font-size: 30px; ");
 		actualFinalScore = new Label(finalScore + "");
 		actualFinalScore.setStyle("-fx-font-size: 50px; ");
+		Label highScoreLabel = new Label("High Score:");
+		highScoreLabel.setStyle("-fx-font-size: 30px; ");
+		actualHighScore = new Label(highscore + "");			//kind of don't need a default value
+		actualHighScore.setStyle("-fx-font-size: 50px; ");
 		Label restartInstructionsLbl = new Label("Press SPACE to restart");
 		restartInstructionsLbl.setStyle("-fx-font-size: 20px");
 		finalScorePane.addColumn(0, fillerRect1);
-		finalScorePane.addColumn(1, finalScoreLbl, actualFinalScore, restartInstructionsLbl);
+		finalScorePane.addColumn(1, finalScoreLbl, actualFinalScore, highScoreLabel, actualHighScore, restartInstructionsLbl);
 		gameOverPane.getChildren().addAll(gameOverLabel, finalScorePane);
 		gameOverScene = new Scene(gameOverPane);
 		//end creating game over scene -------------------------------------------------------------------
@@ -385,7 +391,7 @@ public class EvenOdd extends Application {
 		else{	//if the file doesn't exist, highscore=finalScore, the score of the current game
 			highscore=finalScore;
 		}
-		//highScoreLabel.setText(highscore + "");
+		actualHighScore.setText(highscore + "");
 		
 		
 		try (PrintWriter actualScoreFile = new PrintWriter(scoresFileR);) {		//create printWriter in try to autoclose file
