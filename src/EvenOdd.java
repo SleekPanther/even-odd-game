@@ -51,15 +51,10 @@ import javafx.util.Duration;
  * @author Noah Patullo
  */
 public class EvenOdd extends Application {
+	//GUI components (only those that need to be updated while to game is playing. Many more are local to setUpGUI)
 	private final int windowWidth = 360;		//constants for size of the window
 	private final int windowHeight = 440;
 	private Stage primaryStage;
-	//need to bring all labels & nodes outside as fields
-	private static final double MILLISEC = 100;				//update timer every 100 ms, or 10th of a second
-	private Timeline timerAnimation;									//timeline is called every MILISEC to update the contents of the timer label & count down the time
-	private static final double BONUS_TIME_MILLISEC = 2000;		//display bonus message for 2 seconds
-	private Timeline bonusTimeAnimation;							//timeline for bonus "+10 Sec" message (only called if they get 10 in a row, then on every successive 10
-	
 	//re do Label= Lbl????
 	private Scene gameScene;				//main "game is running" scene
 	private Scene gameOverScene;		//this scene displays the score
@@ -72,26 +67,30 @@ public class EvenOdd extends Application {
 	private Label actualFinalScore;
 	private Label actualHighScore;
 	
-	
-	private int finalScore = 0;			//holds the RUNNING TOTAL of their score for each game played. Reset on each game (maybe work in highscore somehow...)
-	private int highscore = 0;
-	private int bonusTimeCounter = 0;
-	
-	private final int INITIAL_TIME_REMAINING = 10;
-	private double timeRemaining = INITIAL_TIME_REMAINING;
-	private DecimalFormat dFormatter = new DecimalFormat("0.0");		//always want 2 decimals, so need formatter & convert timeRemaining to string before displaying to avoid rounding 9.80 to just 9.8
+	//Timeline Animations: countown clock & bonus time indicator
+	private static final double MILLISEC = 100;				//update timer every 100 ms, or 10th of a second
+	private Timeline timerAnimation;									//timeline is called every MILISEC to update the contents of the timer label & count down the time
+	private static final double BONUS_TIME_MILLISEC = 2000;		//display bonus message for 2 seconds
+	private Timeline bonusTimeAnimation;							//timeline for bonus "+10 Sec" message (only called if they get 10 in a row, then on every successive 10
+	private final int INITIAL_TIME_REMAINING = 10;			//how long the player has when the game starts, can increase to make it easier. This value is added to timeRemaining every time the user gets 10 in a row
+	private double timeRemaining = INITIAL_TIME_REMAINING;			//this value is changed rapidly via the Timeline animation creating the "countdown clock" value which is used to update the contents of a label
+	private DecimalFormat dFormatter = new DecimalFormat("0.0");		//always want 2 decimals for the "countdown clock", so need formatter & convert timeRemaining to string before displaying to avoid rounding 9.80 to just 9.8
 	
 	private int randomNumber = (int)(Math.random()*10);		//initialize just in case, but its value should be set in displayNewNumber @ the start of a game 
 	private Random generator = new Random();
-	private final int RANDOM_UPPER_BOUND = 101;			//generate random number between 0 & 1 less than this number
+	private final int RANDOM_LOWER_BOUND = 0;
+	private final int RANDOM_UPPER_BOUND = 201;		//this must be 1 larger than the actual desired max value 
 	private String currentUserGuess;		//need to initialize? or would that cause problems if they didn't press any keys...
 	
 	private String gameMode = "waiting";		//"waiting" = start screen, "running"=currently being played & new number show up, "over"=switch scene & display score
-	private boolean isGameOver = false;
+	
+	private int finalScore = 0;			//holds the RUNNING TOTAL of their score for each game played. Reset on each game (maybe work in highscore somehow...)
+	private int highscore = 0;
+	private int bonusTimeCounter = 0;		//counts from 0 to 10 when the finalScore increases, gives 10 seconds to timeRemaining & then resets to 0 & starts counting again
 	
 	//constructor unnecessary
 	/**
-	 * calls setUpGUI to get the game running
+	 * Calls setUpGUI to get the game running
 	 */
 	@Override
 	public void start(Stage paramStage) throws Exception {
@@ -325,7 +324,7 @@ public class EvenOdd extends Application {
 	 */
 	public void displayNewNumber(){
 		int tempOldRand = randomNumber;		//save old value so new value can be compared & make sure the same number isn't picked twice
-		randomNumber = generator.nextInt(RANDOM_UPPER_BOUND);		//between 0 & 101
+		randomNumber = generator.nextInt(RANDOM_UPPER_BOUND) + RANDOM_LOWER_BOUND;		//between Creates random numer in a range
 		while( randomNumber == tempOldRand){		//if the new pseudoRandom number is the same, pick a new one
 			randomNumber = generator.nextInt(RANDOM_UPPER_BOUND);		//between 0 & 101
 		}
@@ -337,12 +336,10 @@ public class EvenOdd extends Application {
 	 */
 	public void isUserGuessCorrect(){
 		if( currentUserGuess.equals("EVEN") && (randomNumber%2==0 ) ){		//check if the number is even & their guess matched
-			System.out.println(randomNumber + "  is even, correct");
 			updateScore();			//increase the score, & potentially add time bonus for 10 in a row
 			displayNewNumber();	//display anew random number
 		}
 		else if( currentUserGuess.equals("ODD") && (randomNumber%2 !=0 ) ){	//check if the number is odd & their guess matched
-			System.out.println(randomNumber + "  is odd, correct");
 			updateScore();
 			displayNewNumber();
 		}
@@ -361,7 +358,6 @@ public class EvenOdd extends Application {
 		bonusTimeCounter++;		//increment the bonus time counter as well as finalScore
 		if(bonusTimeCounter == 10){
 			bonusTimeAnimation.play();			//displays a bonus message for for a few seconds, then diappear. Set's the text in a label that is blank most of the time (essentially bonusTimeLabel.setText("+10 Sec"); ). Animation only cycles once, so it's ok that I call "play()" multiple times since the previous cycle should have finished& they shouldn't overlap  
-			System.out.println("+10 Sec");
 			timeRemaining += 10;			//add 10 to time remaining. Since the animation is still running, this new time will be updated in 10 miliseconds when updateTimer is called
 			bonusTimeCounter = 0;		//reset bonus
 		}
