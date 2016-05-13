@@ -293,16 +293,18 @@ public class EvenOdd extends Application {
 	 * Subtract a small number from the timeRemaining & update the label
 	 * It's called rapidly by the timeline & essentially creates the countdown clock
 	 */
-	public void updateTimer(){		
-		if(timeRemaining>0){			//execute while >0, & the containing block only call this method while gameMode is "running"
-			timeRemaining -= .1;		//decrement by .01 for every 100th of a second
-			timeRemaining = (Math.round(timeRemaining * 10) ) /10.0;		//round the result just in case, maybe optional
-			
-			timeLabel.setText( dFormatter.format(timeRemaining) ); 		//update the time remaining, must do string concatenation
-		}
-		else{		//game is over once time remaining is 0
-			gameMode = "over";
-			showGameOver();				//make sure to switch the scenes
+	public void updateTimer(){
+		if( !gameMode.equals("over") ){		//IMPORTANT! only update the timer if the game ISN'T over. Otherwise when time is 0, it keeps calling showGameOver until a new game starts
+			if(timeRemaining>0){			//execute while >0, & the containing block only call this method while gameMode is "running"
+				timeRemaining -= .1;		//decrement by .01 for every 100th of a second
+				timeRemaining = (Math.round(timeRemaining * 10) ) /10.0;		//round the result just in case, maybe optional
+				
+				timeLabel.setText( dFormatter.format(timeRemaining) ); 		//update the time remaining, must do string concatenation
+			}
+			else{		//game is over once time remaining is 0
+				gameMode = "over";
+				showGameOver();				//make sure to switch the scenes
+			}
 		}
 	}
 	
@@ -365,29 +367,29 @@ public class EvenOdd extends Application {
 		setPaneFocus();		//sets the focus to the appropriate pane, or keys would still be registering on the mainGamePane
 	}
 	
+	
 	public void readWriteHighScore(){
 		File scoresFileR = new File("scores1596.txt");
-		if (scoresFileR.exists()) {
-			System.out.println("File already exists");
-			try (Scanner inputFile = new Scanner(scoresFileR);) {
+		if (scoresFileR.exists()) {		//only read from file if they've played a previous game
+			try (Scanner inputFile = new Scanner(scoresFileR);) {		//scanner object in try block to autoclose
 				highscore = inputFile.nextInt();		//get the current high score from the file
-				inputFile.close();		//needed?
-				if(finalScore > highscore){
+				if(finalScore > highscore){			//change the highscore if they the current game's score was higher
 					highscore = finalScore;
 				}
-				//System.out.println(highscore);
+				System.out.println("File exists    " + highscore);
 			}
 			catch(FileNotFoundException e){
-				System.out.println("Error printing to file");
+				System.out.println("Error reading file");
 			}
 		}
-		else{	//if the file doesn't exist, highscore=finalScore (instead of 0 when the game starts)
+		else{	//if the file doesn't exist, highscore=finalScore, the score of the current game
 			highscore=finalScore;
 		}
-		System.out.println("highscore " + highscore);
+		//highScoreLabel.setText(highscore + "");
 		
-		try (PrintWriter actualScoreFile = new PrintWriter(scoresFileR);) {
-			actualScoreFile.println(highscore);
+		
+		try (PrintWriter actualScoreFile = new PrintWriter(scoresFileR);) {		//create printWriter in try to autoclose file
+			actualScoreFile.println(highscore);		//print the highscore & overwrite any previous data
 		}
 		catch(FileNotFoundException e){
 			System.out.println("Error printing to file");
