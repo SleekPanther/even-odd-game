@@ -382,29 +382,15 @@ public class EvenOdd extends Application {
 	/**
 	 * This method reads the previous high score from a file (or sets it equal to the current game score if no file exists & this is the very first game)
 	 * It then updates a label with the high score & saves the new highscore to the file
+	 * Deals with hidden files. For some reason Java wouldn't write a to a hidden file, so the hack is to get the highscore, then if a new one needs to be added, delete the old file & make a new one
 	 */
 	public void readWriteHighScore(){
 		boolean needToUpdateFile = true;		//keep track of if a new score should actually be added (assume true for first game)
-		String scoresFileName = ".CONFIG_DO_NOT_MODIFY";		//file name or path (used to make hidden)
-		String scoresFileName2 = ".CONFIG_DO_NOT_MODIFY2";		//file name or path (used to make hidden)
-		Path highScoreFilePath = Paths.get(scoresFileName);	
+		String scoresFileName = ".CONFIG_DO_NOT_MODIFY";		//file name or path (identical when in the same folder)
+		Path highScoreFilePath = Paths.get(scoresFileName);			//used to delete the file & set HIDDEN
+		File scoresFile = new File(scoresFileName);							//create a file object, but doesn't actually make a file yet
 		
-		File scoresFile = new File(scoresFileName);		//create a file object, but doesn't actually make a file
-		File scoresFile2 = new File(scoresFileName2);		//create a 2nd file object
-		
-//		if( !scoresFile.exists() && !scoresFile2.exists() ){	//if neither file exists, highscore=finalScore, the score of the current game
-//			highscore=finalScore;
-//		}
-//		else if( scoresFile2.exists() ){
-//			scoresFile = new File(scoresFileName2);	
-//			try {
-//				Files.delete(highScoreFilePath);
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//		}
-		
-		if (scoresFile.exists()) {		//only read from file if they've played a previous game
+		if (scoresFile.exists()) {					//only read from file if they've played a previous game
 			needToUpdateFile = false;		//if the file exists, assume they didn't beat the high score
 			try (Scanner inputFile = new Scanner(scoresFile);) {		//scanner object in try block to autoclose
 				highscore = inputFile.nextInt();		//get the current high score from the file
@@ -417,49 +403,30 @@ public class EvenOdd extends Application {
 				System.out.println("Error reading file");
 			}
 		}
-		else{
+		else{		//if it's the 1st game, no score file exists so the highscore is the current game score
 			highscore=finalScore;
 		}
-		
 		actualHighScore.setText(highscore + "");		//display the high score in the label 
 		
-		if(needToUpdateFile){		//only write to the file if a new high score is found. Initially true for 1st game, the "scoresFileR.exists()" is skipped so the 1st score will always be added
-			if (scoresFile.exists()) {
+		if(needToUpdateFile){		//only write to the file if a new high score is found. Initially true for 1st game, the "scoresFile.exists()" is skipped so the 1st score will always be added
+			if (scoresFile.exists()) {			//delete the old score file but only if it exists (Java wouldn't allow writing to hidden files, so just delete & make a new one)
 				try {
 					Files.delete(highScoreFilePath);
 				} catch (IOException e) {
-					e.printStackTrace();
+					System.out.println("Error: Couldn't delete file before updating high score");
 				}
 			}
 			
-//			Path highScoreFilePath = Paths.get(scoresFileName);	
-
-			
-			try (PrintWriter actualScoreFile = new PrintWriter(scoresFile);) {		//create printWriter in try to autoclose file
-				actualScoreFile.println(highscore);		//print the highscore & overwrite any previous data
-				System.out.println("printed to file");
+			//add the high score to the file & set the file to HIDDEN
+			try (PrintWriter actualScoreFile = new PrintWriter(scoresFile);) {		//create printWriter in try to autoclose file & update the score
+				actualScoreFile.println(highscore);		//print the highscore to empty new file
 				Files.setAttribute(highScoreFilePath, "dos:hidden", true);		//attempt to make it a hidden file
 			}
 			catch(FileNotFoundException e){
-				System.out.println("Error printing to file2");
+				System.out.println("Error saving high score, FileNotFoundException");
 			} catch (IOException e) {
-				System.out.println("Permissions 33");
+				System.out.println("Invalid permissions when saving hidden file");
 			}
-//			try {
-//				Files.delete(highScoreFilePath);
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-			
-			//Make the scores file hidden. Must be inside this if(needToUpdateFile){} block or else it causes an error on the 1st game (if score is 0, the high scores doesn't need to be updated, but it attempts to change visibility on a nonexistent ile)
-//			Path highScoreFilePath = Paths.get(scoresFileName);		//get the path (even though it's in the same folder), but it MUST be a Path object
-//			try (PrintWriter actualScoreFile = new PrintWriter(scoresFile);) {
-//		        Files.setAttribute(highScoreFilePath, "dos:hidden", true);		//attempt to make it a hidden file
-//			} catch (IOException e1) {
-//				System.out.println("Uh-Oh, couldn't save high score. Inadequate Permissions");
-//			}
-			
-			
 		}//end if(needToUpdateFile)
 	}
 
