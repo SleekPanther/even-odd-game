@@ -1,6 +1,10 @@
 //Consolidate/organize imports & field variables
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.Random;
+import java.util.Scanner;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -62,6 +66,7 @@ public class EvenOdd extends Application {
 	
 	
 	private int finalScore = 0;			//holds the RUNNING TOTAL of their score for each game played. Reset on each game (maybe work in highscore somehow...)
+	private int highscore = 0;
 	private int bonusTimeCounter = 0;
 	
 	private final int INITIAL_TIME_REMAINING = 10;
@@ -351,11 +356,42 @@ public class EvenOdd extends Application {
 	/**
 	 * Switches the scene to "gameOverScene" & sets the focus so the kayPresses register with the current pane
 	 * Hitting any button will now call identifyKeyPress which has a case to check if the game is over & will start a new game
+	 * @throws FileNotFoundException 
 	 */
 	public void showGameOver(){
+		readWriteHighScore();
 		primaryStage.setScene(gameOverScene);
 		actualFinalScore.setText(finalScore +"");
 		setPaneFocus();		//sets the focus to the appropriate pane, or keys would still be registering on the mainGamePane
+	}
+	
+	public void readWriteHighScore(){
+		File scoresFileR = new File("scores1596.txt");
+		if (scoresFileR.exists()) {
+			System.out.println("File already exists");
+			try (Scanner inputFile = new Scanner(scoresFileR);) {
+				highscore = inputFile.nextInt();		//get the current high score from the file
+				inputFile.close();		//needed?
+				if(finalScore > highscore){
+					highscore = finalScore;
+				}
+				//System.out.println(highscore);
+			}
+			catch(FileNotFoundException e){
+				System.out.println("Error printing to file");
+			}
+		}
+		else{	//if the file doesn't exist, highscore=finalScore (instead of 0 when the game starts)
+			highscore=finalScore;
+		}
+		System.out.println("highscore " + highscore);
+		
+		try (PrintWriter actualScoreFile = new PrintWriter(scoresFileR);) {
+			actualScoreFile.println(highscore);
+		}
+		catch(FileNotFoundException e){
+			System.out.println("Error printing to file");
+		}
 	}
 
 }
