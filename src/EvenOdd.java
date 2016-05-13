@@ -1,7 +1,12 @@
 //Consolidate/organize imports & field variables
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.DosFileAttributes;
 import java.text.DecimalFormat;
 import java.util.Random;
 import java.util.Scanner;
@@ -380,7 +385,9 @@ public class EvenOdd extends Application {
 	 */
 	public void readWriteHighScore(){
 		boolean needToUpdateFile = true;		//keep track of if a new score should actually be added (assume true for first game)
-		File scoresFile = new File("scores1596.txt");
+		String scoresFileName = ".CONFIG_DO_NOT_MODIFY";
+		File scoresFile = new File(scoresFileName);		//create a file object, but doesn't actually make a file
+
 		if (scoresFile.exists()) {		//only read from file if they've played a previous game
 			needToUpdateFile = false;		//if the file exists, assume they didn't beat the high score
 			try (Scanner inputFile = new Scanner(scoresFile);) {		//scanner object in try block to autoclose
@@ -407,6 +414,22 @@ public class EvenOdd extends Application {
 				System.out.println("Error printing to file");
 			}
 		}
+		
+		//String path0 = ".HIGHSCORES_DO_NOT_MODIFY";
+		Path filePath = Paths.get(scoresFileName);
+		try {
+			DosFileAttributes attr = Files.readAttributes(filePath, DosFileAttributes.class);
+			 System.out.println("isArchive()  = " + attr.isArchive());
+	        System.out.println("isHidden()   = " + attr.isHidden());
+	        System.out.println("isReadOnly() = " + attr.isReadOnly());
+	        System.out.println("isSystem()   = " + attr.isSystem());
+	        
+	        Files.setAttribute(filePath, "dos:hidden", true);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 	}
 
 }
