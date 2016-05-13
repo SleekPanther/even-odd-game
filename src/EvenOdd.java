@@ -385,11 +385,11 @@ public class EvenOdd extends Application {
 	 */
 	public void readWriteHighScore(){
 		boolean needToUpdateFile = true;		//keep track of if a new score should actually be added (assume true for first game)
-		String scoresFileName = ".CONFIG_DO_NOT_MODIFY";
+		String scoresFileName = ".CONFIG_DO_NOT_MODIFY";		//file name or path (used to make hidden)
 		File scoresFile = new File(scoresFileName);		//create a file object, but doesn't actually make a file
 
 		if (scoresFile.exists()) {		//only read from file if they've played a previous game
-			needToUpdateFile = false;		//if the file exists, assume they didn't beat the high score
+			//needToUpdateFile = false;		//if the file exists, assume they didn't beat the high score
 			try (Scanner inputFile = new Scanner(scoresFile);) {		//scanner object in try block to autoclose
 				highscore = inputFile.nextInt();		//get the current high score from the file
 				if(finalScore > highscore){			//change the highscore if they the current game's score was higher
@@ -413,23 +413,15 @@ public class EvenOdd extends Application {
 			catch(FileNotFoundException e){
 				System.out.println("Error printing to file");
 			}
-		}
-		
-		//String path0 = ".HIGHSCORES_DO_NOT_MODIFY";
-		Path filePath = Paths.get(scoresFileName);
-		try {
-			DosFileAttributes attr = Files.readAttributes(filePath, DosFileAttributes.class);
-			 System.out.println("isArchive()  = " + attr.isArchive());
-	        System.out.println("isHidden()   = " + attr.isHidden());
-	        System.out.println("isReadOnly() = " + attr.isReadOnly());
-	        System.out.println("isSystem()   = " + attr.isSystem());
-	        
-	        Files.setAttribute(filePath, "dos:hidden", true);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
+			
+			//Make the scores file hidden. Must be inside this if(needToUpdateFile){} block or else it causes an error on the 1st game (if score is 0, the high scores doesn't need to be updated, but it attempts to change visibility on a nonexistent ile)
+			Path highScorefilePath = Paths.get(scoresFileName);		//get the path (even though it's in the same folder), but it MUST be a Path object
+			try {	        
+		        Files.setAttribute(highScorefilePath, "dos:hidden", true);		//attempt to make it a hidden file
+			} catch (IOException e1) {
+				System.out.println("Uh-Oh, couldn't save high score. Inadequate Permissions");
+			}
+		}//end if(needToUpdateFile)
 	}
 
 }
