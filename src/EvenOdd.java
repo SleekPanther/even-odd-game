@@ -42,6 +42,7 @@ import javafx.util.Duration;
  *  isUserGuessCorrect() is called on every keypress when the game is "running". Checks if the keypress matches even/odd, update the score & display a new number. Can end the game if they guess wrong
  *  updateScore() increases overall score & displays bonus message if they got 10 in a row correct
  *  showGameOver() switches scenes & prompts the use to restart
+ *  readWriteHighScore() reads high scores from a file, updates the high score label & saves the new high score (but only if it actually is a new high score. Don't bother changing the file if the score is NOT a high Score)
  * @author Noah Patullo
  */
 public class EvenOdd extends Application {
@@ -373,16 +374,21 @@ public class EvenOdd extends Application {
 		setPaneFocus();		//sets the focus to the appropriate pane, or keys would still be registering on the mainGamePane
 	}
 	
-	
+	/**
+	 * This method reads the previous high score from a file (or sets it equal to the current game score if no file exists & this is the very first game)
+	 * It then updates a label with the high score & saves the new highscore to the file
+	 */
 	public void readWriteHighScore(){
-		File scoresFileR = new File("scores1596.txt");
-		if (scoresFileR.exists()) {		//only read from file if they've played a previous game
-			try (Scanner inputFile = new Scanner(scoresFileR);) {		//scanner object in try block to autoclose
+		boolean needToUpdateFile = true;		//keep track of if a new score should actually be added (assume true for first game)
+		File scoresFile = new File("scores1596.txt");
+		if (scoresFile.exists()) {		//only read from file if they've played a previous game
+			needToUpdateFile = false;		//if the file exists, assume they didn't beat the high score
+			try (Scanner inputFile = new Scanner(scoresFile);) {		//scanner object in try block to autoclose
 				highscore = inputFile.nextInt();		//get the current high score from the file
 				if(finalScore > highscore){			//change the highscore if they the current game's score was higher
 					highscore = finalScore;
+					needToUpdateFile = true;		//a new high score was found & needs to be written to the file
 				}
-				System.out.println("File exists    " + highscore);
 			}
 			catch(FileNotFoundException e){
 				System.out.println("Error reading file");
@@ -391,14 +397,15 @@ public class EvenOdd extends Application {
 		else{	//if the file doesn't exist, highscore=finalScore, the score of the current game
 			highscore=finalScore;
 		}
-		actualHighScore.setText(highscore + "");
+		actualHighScore.setText(highscore + "");		//display the high score in the label 
 		
-		
-		try (PrintWriter actualScoreFile = new PrintWriter(scoresFileR);) {		//create printWriter in try to autoclose file
-			actualScoreFile.println(highscore);		//print the highscore & overwrite any previous data
-		}
-		catch(FileNotFoundException e){
-			System.out.println("Error printing to file");
+		if(needToUpdateFile){		//only write to the file if a new high score is found. Initially true for 1st game, the "scoresFileR.exists()" is skipped so the 1st score will always be added
+			try (PrintWriter actualScoreFile = new PrintWriter(scoresFile);) {		//create printWriter in try to autoclose file
+				actualScoreFile.println(highscore);		//print the highscore & overwrite any previous data
+			}
+			catch(FileNotFoundException e){
+				System.out.println("Error printing to file");
+			}
 		}
 	}
 
