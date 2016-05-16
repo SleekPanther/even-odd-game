@@ -1,3 +1,4 @@
+//make "space to restart" obvious (difference color)
 import javafx.application.Application;
 import javafx.animation.Timeline;			//Timeline animations
 import javafx.animation.KeyFrame;
@@ -74,10 +75,10 @@ public class EvenOdd extends Application {
 	private double timeRemaining = INITIAL_TIME_REMAINING;			//this value is changed rapidly via the Timeline animation creating the "countdown clock" value which is used to update the contents of a label
 	private DecimalFormat dFormatter = new DecimalFormat("0.0");		//always want 2 decimals for the "countdown clock", so need formatter & convert timeRemaining to string before displaying to avoid rounding 9.80 to just 9.8
 	
-	private int randomNumber = (int)(Math.random()*10);		//initialize just in case, but its value should be set in displayNewNumber @ the start of a game 
+	private int randomNumber = (int)(Math.random()*10);		//initialize just in case, but its value should be set in displayNewNumber @ the start of a game
 	private Random generator = new Random();
 	private final int RANDOM_LOWER_BOUND = 0;
-	private final int RANDOM_UPPER_BOUND = 201;		//this must be 1 larger than the actual desired max value 
+	private final int RANDOM_UPPER_BOUND = 201;		//this must be 1 larger than the actual desired max value
 	private String currentUserGuess;		//need to initialize? or would that cause problems if they didn't press any keys...
 	
 	private String gameMode = "waiting";		//"waiting" = start screen, "running"=currently being played & new number show up, "over"=switch scene & display score
@@ -105,7 +106,7 @@ public class EvenOdd extends Application {
 	}
 	
 	/*
-	 * Create a GUI then wait for keyPresse to start gameplay 
+	 * Create a GUI then wait for keyPresse to start gameplay
 	 */
 	public void setUpGUI(){
 		mainGamePane = new GridPane();
@@ -121,7 +122,7 @@ public class EvenOdd extends Application {
 		bonusTimeLabel = new Label("");		//create label to hold "+10 Sec" when a time bonus is reached
 		bonusTimeLabel.setStyle("-fx-font-size: 20px");
 		bonusTimeLabel.setAlignment(Pos.CENTER);
-		scoreLabel = new Label(finalScore + "");		//set initial score to 0. 
+		scoreLabel = new Label(finalScore + "");		//set initial score to 0.
 		scoreLabel.setStyle("-fx-background-color:red; -fx-text-fill: yellow; -fx-font-size: 30px");
 		timeScorePane.getChildren().addAll(timeLabel,bonusTimeLabel,scoreLabel);
 		
@@ -177,7 +178,7 @@ public class EvenOdd extends Application {
 		Label gameOverLabel = new Label("Game Over");
 		gameOverLabel.setStyle("-fx-font-size: 50px; ");
 		gameOverLabel.setAlignment(Pos.BASELINE_RIGHT);
-		Rectangle fillerRect1 = new Rectangle(50, 0, Color.TRANSPARENT);		//this "spacer" rectangle has width, but is 0px tall & transparent, so just there to provide space on the left 
+		Rectangle fillerRect1 = new Rectangle(50, 0, Color.TRANSPARENT);		//this "spacer" rectangle has width, but is 0px tall & transparent, so just there to provide space on the left
 		Label finalScoreLbl = new Label("Score: ");
 		finalScoreLbl.setStyle("-fx-font-size: 30px; ");
 		actualFinalScore = new Label(finalScore + "");
@@ -186,7 +187,7 @@ public class EvenOdd extends Application {
 		highScoreLabel.setStyle("-fx-font-size: 30px; ");
 		actualHighScore = new Label(highscore + "");			//kind of don't need a default value
 		actualHighScore.setStyle("-fx-font-size: 50px; ");
-		Label restartInstructionsLbl = new Label("Press SPACE to restart");
+		Label restartInstructionsLbl = new Label("      Press SPACE to restart");
 		restartInstructionsLbl.setStyle("-fx-font-size: 20px");
 		finalScorePane.addColumn(0, fillerRect1);
 		finalScorePane.addColumn(1, finalScoreLbl, actualFinalScore, highScoreLabel, actualHighScore, restartInstructionsLbl);
@@ -203,7 +204,7 @@ public class EvenOdd extends Application {
         
         
         setUpAnimation();			//only need to call once!
-        setUpKeyAssociations();	//associate both panes to call identifyKeypress() when a key is pressed 
+        setUpKeyAssociations();	//associate both panes to call identifyKeypress() when a key is pressed
         setPaneFocus();				//start a game once the GUI is set up. Calls subsequent methods once keypresses occur
 	}
 	
@@ -224,9 +225,9 @@ public class EvenOdd extends Application {
         EventHandler<ActionEvent> bonusTimeEventHandler2 = (ActionEvent e) -> {		// handler to set text back to nothing
         	bonusTimeLabel.setText("");
         };
-        // animation for bonus message. 1st keyframe is to display message & time=0. 2nd keyframe is to set text to empty, & this lasts length of BONUS_TIME_MILLISEC. Impossible to detect changes on INDEFINITE, but works for just 1 cycle 
+        // animation for bonus message. 1st keyframe is to display message & time=0. 2nd keyframe is to set text to empty, & this lasts length of BONUS_TIME_MILLISEC. Impossible to detect changes on INDEFINITE, but works for just 1 cycle
         bonusTimeAnimation = new Timeline(new KeyFrame(Duration.millis(0), bonusTimeEventHandler),  new KeyFrame(Duration.millis(BONUS_TIME_MILLISEC), bonusTimeEventHandler2) );
-        bonusTimeAnimation.setCycleCount(1);		//only repeat the 
+        bonusTimeAnimation.setCycleCount(1);		//only repeat the
     }
 	
 	/**
@@ -341,21 +342,21 @@ public class EvenOdd extends Application {
 			updateScore();
 			displayNewNumber();
 		}
-		else{		//if they guessed wrong, end the game 
+		else{		//if they guessed wrong, end the game
 			gameMode = "over";	//change the state of the game
 			showGameOver();			//switch scenes if they guess wrong
 		}
 	}
 	
 	/**
-	 * Increase score. Also has a separate counter which resets if they get 10 correct, then a 10 second bonus is added to timeRemaining & a message is displayed notifying the player of the bonus 
+	 * Increase score. Also has a separate counter which resets if they get 10 correct, then a 10 second bonus is added to timeRemaining & a message is displayed notifying the player of the bonus
 	 */
 	public void updateScore(){
 		finalScore++;		//increment score
 		scoreLabel.setText(finalScore + "");
 		bonusTimeCounter++;		//increment the bonus time counter as well as finalScore
 		if(bonusTimeCounter == 10){
-			bonusTimeAnimation.play();			//displays a bonus message for for a few seconds, then diappear. Set's the text in a label that is blank most of the time (essentially bonusTimeLabel.setText("+10 Sec"); ). Animation only cycles once, so it's ok that I call "play()" multiple times since the previous cycle should have finished& they shouldn't overlap  
+			bonusTimeAnimation.play();			//displays a bonus message for for a few seconds, then diappear. Set's the text in a label that is blank most of the time (essentially bonusTimeLabel.setText("+10 Sec"); ). Animation only cycles once, so it's ok that I call "play()" multiple times since the previous cycle should have finished& they shouldn't overlap
 			timeRemaining += 10;			//add 10 to time remaining. Since the animation is still running, this new time will be updated in 10 miliseconds when updateTimer is called
 			bonusTimeCounter = 0;		//reset bonus
 		}
@@ -364,7 +365,7 @@ public class EvenOdd extends Application {
 	/**
 	 * Switches the scene to "gameOverScene" & sets the focus so the kayPresses register with the current pane
 	 * Hitting any button will now call identifyKeyPress which has a case to check if the game is over & will start a new game
-	 * @throws FileNotFoundException 
+	 * @throws FileNotFoundException
 	 */
 	public void showGameOver(){
 		readWriteHighScore();
@@ -400,7 +401,7 @@ public class EvenOdd extends Application {
 		else{		//if it's the 1st game, no score file exists so the highscore is the current game score
 			highscore=finalScore;
 		}
-		actualHighScore.setText(highscore + "");		//display the high score in the label 
+		actualHighScore.setText(highscore + "");		//display the high score in the label
 		
 		if(needToUpdateFile){		//only write to the file if a new high score is found. Initially true for 1st game, the "scoresFile.exists()" is skipped so the 1st score will always be added
 			if (scoresFile.exists()) {			//delete the old score file but only if it exists (Java wouldn't allow writing to hidden files, so just delete & make a new one)
