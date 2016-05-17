@@ -108,55 +108,40 @@ public class EvenOdd extends Application {
 		VBox timeScorePane = new VBox();
 		timeScorePane.getStyleClass().addAll("align-center");		//centers all children elements (timer, score & bonus)
 		timeScorePane.setId("timeScorePane");
-		//timeScorePane.setAlignment(Pos.CENTER);		//center the entire pane (& therefore all it's nodes)
-		//timeScorePane.setStyle("-fx-background-color: lightyellow");
 		timeLabel = new Label(timeRemaining + "");		//create label & set text. Kind of unnecessary since updateTimer() is called almost immediately which starts counting down from 10 anyway
 		timeLabel.setId("timeLabel");
 		timeLabel.getStyleClass().addAll("largeText");
-		//timeLabel.setStyle("-fx-background-color:blue; -fx-font-size: 50px");
 		bonusTimeLabel = new Label("");		//create label to hold "+10 Sec" when a time bonus is reached
 		bonusTimeLabel.setId("bonusTimeLabel");
 		bonusTimeLabel.getStyleClass().addAll("smallText");
-		//bonusTimeLabel.setStyle("-fx-font-size: 20px");
-		//bonusTimeLabel.setAlignment(Pos.CENTER);
 		scoreLabel = new Label(finalScore + "");		//set initial score to 0.
 		scoreLabel.getStyleClass().addAll("mediumText");
 		scoreLabel.setId("scoreLabel");
-		//scoreLabel.setStyle("-fx-background-color:red; -fx-text-fill: yellow; ");
 		timeScorePane.getChildren().addAll(timeLabel, bonusTimeLabel, scoreLabel);
 		
 		StackPane numberAreaPane = new StackPane();
 		numberAreaPane.setPrefHeight(200);		//maybe just leave this up to the pixel size of "randNumLabel" css fx
 		numberAreaPane.setId("numberAreaPane");
-		//numberArea.setStyle("-fx-background-color: black;");
 		randNumLabel = new Label("Press any key to start");
 		randNumLabel.getStyleClass().addAll("mediumText");
 		randNumLabel.setId("randNumLabel");
-		//randNumLabel.setStyle("-fx-background-color:darkblue; -fx-text-fill:lime; -fx-font-size: 30px");
 		numberAreaPane.getChildren().add(randNumLabel);
 		
 		Label evenLabel = new Label("       Even\n(right arrow)");
 		evenLabel.getStyleClass().addAll("oddEvenLabels");
-		//evenLabel.setStyle("-fx-background-color:white");
 		StackPane evenPane = new StackPane();
 		evenPane.setPrefWidth(windowWidth/2.0);
 		evenPane.setId("evenPane");
-		//evenPane.setStyle("-fx-background-color:lime");
 		evenPane.getChildren().add(evenLabel);
 		Label oddLabel = new Label("     Odd\n(left arrow)");
 		oddLabel.getStyleClass().addAll("oddEvenLabels");
-		//oddLabel.setStyle("-fx-background-color:white");
 		StackPane oddPane = new StackPane();
 		oddPane.setPrefWidth(windowWidth/2.0);		//take up half the window. +40 @ 360px width does a fix, but expands the entire window as  well
-		//oddPane.setStyle("-fx-background-color:orange");
 		oddPane.getStyleClass().addAll("odd-and-even-pane");		//needed?
 		oddPane.setId("oddPane");
 		oddPane.getChildren().add(oddLabel);
-		GridPane evenOddPane = new GridPane();	
-		//evenOddPane.getStyleClass().add("even-odd-pane");
-		//evenOddPane.setStyle("-fx-background-color:purple");
+		GridPane evenOddPane = new GridPane();
 		evenOddPane.addRow(0, oddPane, evenPane);
-		//FlowPane evenOddContainer = new FlowPane();
 		StackPane evenOddContainerPane = new StackPane();
 		evenOddContainerPane.getChildren().add(evenOddPane);
 		
@@ -169,29 +154,20 @@ public class EvenOdd extends Application {
 		//--------------------------------------------------------------start creating "Game Over" scene --------------------------------------------------------------
 		gameOverPane = new VBox();
 		gameOverPane.getStyleClass().addAll("align-center");
-		//gameOverPane.setAlignment(Pos.TOP_CENTER);
-		//gameOverPane.setStyle("-fx-background-color: gold;");
 		gameOverPane.setId("gameOverPane");
 		VBox finalScorePane = new VBox();
 		finalScorePane.setId("finalScorePane");
 		finalScorePane.setPrefWidth(50);
-		//finalScorePane.setStyle("-fx-background-color: yellow");
 		Label gameOverLabel = new Label("Game Over");
 		gameOverLabel.getStyleClass().addAll("largeText");
-		//gameOverLabel.setStyle("-fx-font-size: 50px; ");
-		//gameOverLabel.setAlignment(Pos.BASELINE_RIGHT);
 		Label finalScoreLabel = new Label("Score: ");
 		finalScoreLabel.getStyleClass().addAll("mediumText");
-		//finalScoreLbl.setStyle("-fx-font-size: 30px; ");
 		actualFinalScore = new Label(finalScore + "");
 		actualFinalScore.getStyleClass().addAll("largeText");
-		//actualFinalScore.setStyle("-fx-font-size: 50px; ");
 		Label highScoreLabel = new Label("High Score:");
 		highScoreLabel.getStyleClass().addAll("mediumText");
-		//highScoreLabel.setStyle("-fx-font-size: 30px; ");
 		actualHighScore = new Label(highscore + "");			//kind of don't need a default value
 		actualHighScore.getStyleClass().addAll("largeText");
-		//actualHighScore.setStyle("-fx-font-size: 50px; ");
 		finalScorePane.getChildren().addAll(finalScoreLabel, actualFinalScore, highScoreLabel, actualHighScore);
 		VBox finalScorePaneContainer = new VBox();
 		finalScorePaneContainer.getChildren().addAll(finalScorePane);
@@ -200,7 +176,6 @@ public class EvenOdd extends Application {
 		Label restartInstructionsLabel = new Label("Press SPACE to restart");
 		restartInstructionsLabel.getStyleClass().addAll("mediumText");
 		restartInstructionsLabel.setId("restartInstructionsLabel");
-		//restartInstructionsLbl.setStyle("-fx-font-size: 20px");
 		gameOverPane.getChildren().addAll(gameOverLabel, finalScorePaneContainer, restartInstructionsLabel);
 		gameOverScene = new Scene(gameOverPane);
 		gameOverScene.getStylesheets().add("styles.css");				//add external css styles 
