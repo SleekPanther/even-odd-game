@@ -74,7 +74,9 @@
 }
 
 #restartInstructionsLabel{
-	-fx-background-color: pink;
+	-fx-background-color: white;
+	-fx-padding: 0 5px;
+	-fx-background-radius: 10px;
 }
 
 /* fix lbl = Label */

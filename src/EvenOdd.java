@@ -198,16 +198,16 @@ public class EvenOdd extends Application {
 		finalScorePaneContainer.getStyleClass().addAll("align-center");
 		finalScorePaneContainer.setId("finalScorePaneContainer");
 		Label restartInstructionsLabel = new Label("Press SPACE to restart");
-		restartInstructionsLabel.getStyleClass().addAll("smallText");
+		restartInstructionsLabel.getStyleClass().addAll("mediumText");
 		restartInstructionsLabel.setId("restartInstructionsLabel");
 		//restartInstructionsLbl.setStyle("-fx-font-size: 20px");
 		gameOverPane.getChildren().addAll(gameOverLabel, finalScorePaneContainer, restartInstructionsLabel);
 		gameOverScene = new Scene(gameOverPane);
 		gameOverScene.getStylesheets().add("styles.css");				//add external css styles 
-		//end creating game over scene -------------------------------------------------------------------
+		//-------------------------------------------------end creating game over scene -------------------------------------------------------------------
 		
 		primaryStage.setTitle("Even Odd");
-        primaryStage.setScene(gameOverScene);		//sets the initial scene when the game is "waiting". Can easily be changed to gameOverScene to test GUI
+        primaryStage.setScene(gameScene);		//sets the initial scene when the game is "waiting". Can easily be changed to gameOverScene to test GUI
         primaryStage.setHeight(windowHeight);
         primaryStage.setWidth(windowWidth);
         primaryStage.setResizable(false);		//this makes the window NON-resizable.
