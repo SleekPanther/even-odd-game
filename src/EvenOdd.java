@@ -1,5 +1,3 @@
-//make "space to restart" obvious (difference color)
-//external css file for buttons?
 import javafx.application.Application;
 import javafx.animation.Timeline;			//Timeline animations
 import javafx.animation.KeyFrame;
@@ -11,14 +9,11 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;						//gui stuff
 import javafx.scene.Scene;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.shape.Rectangle;
 import java.util.Random;						//actually creating random numbers
 import java.io.File;								//mostly for saving high scores
 import java.io.FileNotFoundException;
@@ -55,7 +50,6 @@ public class EvenOdd extends Application {
 	private final int windowWidth = 360;		//constants for size of the window
 	private final int windowHeight = 440;
 	private Stage primaryStage;
-	//re do Label= Lbl????
 	private Scene gameScene;				//main "game is running" scene
 	private Scene gameOverScene;		//this scene displays the score
 	private Label timeLabel;
@@ -199,11 +193,15 @@ public class EvenOdd extends Application {
 		actualHighScore.getStyleClass().addAll("largeText");
 		//actualHighScore.setStyle("-fx-font-size: 50px; ");
 		finalScorePane.getChildren().addAll(finalScoreLabel, actualFinalScore, highScoreLabel, actualHighScore);
+		VBox finalScorePaneContainer = new VBox();
+		finalScorePaneContainer.getChildren().addAll(finalScorePane);
+		finalScorePaneContainer.getStyleClass().addAll("align-center");
+		finalScorePaneContainer.setId("finalScorePaneContainer");
 		Label restartInstructionsLabel = new Label("Press SPACE to restart");
 		restartInstructionsLabel.getStyleClass().addAll("smallText");
 		restartInstructionsLabel.setId("restartInstructionsLabel");
 		//restartInstructionsLbl.setStyle("-fx-font-size: 20px");
-		gameOverPane.getChildren().addAll(gameOverLabel, finalScorePane, restartInstructionsLabel);
+		gameOverPane.getChildren().addAll(gameOverLabel, finalScorePaneContainer, restartInstructionsLabel);
 		gameOverScene = new Scene(gameOverPane);
 		gameOverScene.getStylesheets().add("styles.css");				//add external css styles 
 		//end creating game over scene -------------------------------------------------------------------
