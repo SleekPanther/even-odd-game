@@ -143,28 +143,30 @@ public class EvenOdd extends Application {
 		//randNumLabel.setStyle("-fx-background-color:darkblue; -fx-text-fill:lime; -fx-font-size: 30px");
 		numberAreaPane.getChildren().add(randNumLabel);
 		
-		Label oddLabel = new Label("     Odd\n(left arrow)");
-		oddLabel.setStyle("-fx-background-color:white");
+		
 		Label evenLabel = new Label("       Even\n(right arrow)");
-		evenLabel.setStyle("-fx-background-color:white");
-		//FlowPane evenPane = new FlowPane();
+		evenLabel.getStyleClass().addAll("oddEvenLabels");
+		//evenLabel.setStyle("-fx-background-color:white");
 		StackPane evenPane = new StackPane();
 		evenPane.setPrefWidth(windowWidth/2.0);
-		evenPane.setStyle("-fx-background-color:lime");
-		//FlowPane oddPane = new FlowPane();
-		StackPane oddPane = new StackPane();
+		evenPane.setId("evenPane");
+		//evenPane.setStyle("-fx-background-color:lime");
 		evenPane.getChildren().add(evenLabel);
+		Label oddLabel = new Label("     Odd\n(left arrow)");
+		oddLabel.getStyleClass().addAll("oddEvenLabels");
+		//oddLabel.setStyle("-fx-background-color:white");
+		StackPane oddPane = new StackPane();
 		oddPane.setPrefWidth(windowWidth/2.0);		//take up half the window. +40 @ 360px width does a fix, but expands the entire window as  well
 		//oddPane.setStyle("-fx-background-color:orange");
-		oddPane.getStyleClass().addAll("odd-and-even-pane");
-		oddPane.setId("odd-pane");
+		oddPane.getStyleClass().addAll("odd-and-even-pane");		//needed?
+		oddPane.setId("oddPane");
 		oddPane.getChildren().add(oddLabel);
-		GridPane evenOddPane = new GridPane();	//add thing in constructor here
+		GridPane evenOddPane = new GridPane();	
 		//evenOddPane.getStyleClass().add("even-odd-pane");
 		//evenOddPane.setStyle("-fx-background-color:purple");
 		evenOddPane.addRow(0, oddPane, evenPane);
-		FlowPane evenOddContainer = new FlowPane();
-		//StackPane evenOddContainer = new StackPane();
+		//FlowPane evenOddContainer = new FlowPane();
+		StackPane evenOddContainer = new StackPane();
 		evenOddContainer.getChildren().add(evenOddPane);
 		
 		mainGamePane.addColumn(0, timeScorePane, numberAreaPane, evenOddContainer);
