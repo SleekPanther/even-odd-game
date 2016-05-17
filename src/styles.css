@@ -59,3 +59,15 @@
 }
 
 /*-------------------------------------------- Game over scene-------------------------------------------- */
+#gameOverPane{
+	-fx-background-color: gold;
+}
+#finalScorePane{
+	-fx-background-color: yellow;
+}
+
+#restartInstructionsLabel{
+	-fx-background-color: pink; 
+}
+
+/* fix lbl = Label */

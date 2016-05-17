@@ -110,8 +110,6 @@ public class EvenOdd extends Application {
 	 * Create a GUI then wait for keyPresse to start gameplay
 	 */
 	public void setUpGUI(){
-		mainGamePane = new GridPane();
-		
 		//timer & random numbers
 		VBox timeScorePane = new VBox();
 		timeScorePane.getStyleClass().addAll("align-center");		//centers all children elements (timer, score & bonus)
@@ -143,7 +141,6 @@ public class EvenOdd extends Application {
 		//randNumLabel.setStyle("-fx-background-color:darkblue; -fx-text-fill:lime; -fx-font-size: 30px");
 		numberAreaPane.getChildren().add(randNumLabel);
 		
-		
 		Label evenLabel = new Label("       Even\n(right arrow)");
 		evenLabel.getStyleClass().addAll("oddEvenLabels");
 		//evenLabel.setStyle("-fx-background-color:white");
@@ -169,42 +166,51 @@ public class EvenOdd extends Application {
 		StackPane evenOddContainerPane = new StackPane();
 		evenOddContainerPane.getChildren().add(evenOddPane);
 		
+		mainGamePane = new GridPane();			//actually create the pane that everything is added to
 		mainGamePane.addColumn(0, timeScorePane, numberAreaPane, evenOddContainerPane);
-		
-		gameScene = new Scene(mainGamePane);
+		gameScene = new Scene(mainGamePane);				//create game scene (already declared as an instance field)
 		gameScene.getStylesheets().add("styles.css");			//link to external css
 		
 		
-		//stare creating "Game Over" scene --------------------------------------------------------------
+		//--------------------------------------------------------------start creating "Game Over" scene --------------------------------------------------------------
 		gameOverPane = new VBox();
-		//gameOverPane.setPrefSize(windowWidth, windowHeight);
-		gameOverPane.setAlignment(Pos.TOP_CENTER);
-		gameOverPane.setStyle("-fx-background-color: gold;");
+		gameOverPane.getStyleClass().addAll("align-center");
+		//gameOverPane.setAlignment(Pos.TOP_CENTER);
+		//gameOverPane.setStyle("-fx-background-color: gold;");
+		gameOverPane.setId("gameOverPane");
 		GridPane finalScorePane = new GridPane();
-		finalScorePane.setStyle("-fx-background-color: yellow");
+		finalScorePane.setId("finalScorePane");
+		//finalScorePane.setStyle("-fx-background-color: yellow");
 		Label gameOverLabel = new Label("Game Over");
-		gameOverLabel.setStyle("-fx-font-size: 50px; ");
-		gameOverLabel.setAlignment(Pos.BASELINE_RIGHT);
+		gameOverLabel.getStyleClass().addAll("largeText");
+		//gameOverLabel.setStyle("-fx-font-size: 50px; ");
+		//gameOverLabel.setAlignment(Pos.BASELINE_RIGHT);
 		Rectangle fillerRect1 = new Rectangle(50, 0, Color.TRANSPARENT);		//this "spacer" rectangle has width, but is 0px tall & transparent, so just there to provide space on the left
-		Label finalScoreLbl = new Label("Score: ");
-		finalScoreLbl.setStyle("-fx-font-size: 30px; ");
+		Label finalScoreLabel = new Label("Score: ");
+		finalScoreLabel.getStyleClass().addAll("mediumText");
+		//finalScoreLbl.setStyle("-fx-font-size: 30px; ");
 		actualFinalScore = new Label(finalScore + "");
-		actualFinalScore.setStyle("-fx-font-size: 50px; ");
+		actualFinalScore.getStyleClass().addAll("largeText");
+		//actualFinalScore.setStyle("-fx-font-size: 50px; ");
 		Label highScoreLabel = new Label("High Score:");
-		highScoreLabel.setStyle("-fx-font-size: 30px; ");
+		highScoreLabel.getStyleClass().addAll("mediumText");
+		//highScoreLabel.setStyle("-fx-font-size: 30px; ");
 		actualHighScore = new Label(highscore + "");			//kind of don't need a default value
-		actualHighScore.setStyle("-fx-font-size: 50px; ");
-		Label restartInstructionsLbl = new Label("      Press SPACE to restart");
-		restartInstructionsLbl.setStyle("-fx-font-size: 20px");
+		actualHighScore.getStyleClass().addAll("largeText");
+		//actualHighScore.setStyle("-fx-font-size: 50px; ");
 		finalScorePane.addColumn(0, fillerRect1);
-		finalScorePane.addColumn(1, finalScoreLbl, actualFinalScore, highScoreLabel, actualHighScore, restartInstructionsLbl);
-		gameOverPane.getChildren().addAll(gameOverLabel, finalScorePane);
+		finalScorePane.addColumn(1, finalScoreLabel, actualFinalScore, highScoreLabel, actualHighScore);
+		Label restartInstructionsLabel = new Label("Press SPACE to restart");
+		restartInstructionsLabel.getStyleClass().addAll("smallText");
+		restartInstructionsLabel.setId("restartInstructionsLabel");
+		//restartInstructionsLbl.setStyle("-fx-font-size: 20px");
+		gameOverPane.getChildren().addAll(gameOverLabel, finalScorePane, restartInstructionsLabel);
 		gameOverScene = new Scene(gameOverPane);
 		gameOverScene.getStylesheets().add("styles.css");				//add external css styles 
 		//end creating game over scene -------------------------------------------------------------------
 		
 		primaryStage.setTitle("Even Odd");
-        primaryStage.setScene(gameScene);		//sets the initial scene when the game is "waiting". Can easily be changed to gameOverScene to test GUI
+        primaryStage.setScene(gameOverScene);		//sets the initial scene when the game is "waiting". Can easily be changed to gameOverScene to test GUI
         primaryStage.setHeight(windowHeight);
         primaryStage.setWidth(windowWidth);
         primaryStage.setResizable(false);		//this makes the window NON-resizable.
