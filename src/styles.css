@@ -48,7 +48,8 @@
 	
 }
 .oddEvenLabels {
-	-fx-background-color: white;
+	-fx-font-weight: bold;
+	-fx-font-size: 20px;		/*qwert: this essentially sets the height for the evenOddContainer*/
 }
 #oddPane{
 	-fx-background-color: orange;

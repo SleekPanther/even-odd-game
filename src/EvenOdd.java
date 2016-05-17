@@ -166,14 +166,11 @@ public class EvenOdd extends Application {
 		//evenOddPane.setStyle("-fx-background-color:purple");
 		evenOddPane.addRow(0, oddPane, evenPane);
 		//FlowPane evenOddContainer = new FlowPane();
-		StackPane evenOddContainer = new StackPane();
-		evenOddContainer.getChildren().add(evenOddPane);
+		StackPane evenOddContainerPane = new StackPane();
+		evenOddContainerPane.getChildren().add(evenOddPane);
 		
-		mainGamePane.addColumn(0, timeScorePane, numberAreaPane, evenOddContainer);
-//		mainGamePane.add(gameStatusTopbar, 0, 0);
-//		mainGamePane.add(evenOddContainer,0,2);
+		mainGamePane.addColumn(0, timeScorePane, numberAreaPane, evenOddContainerPane);
 		
-		//mainGamePane.setPrefSize(windowWidth, windowHeight);
 		gameScene = new Scene(mainGamePane);
 		gameScene.getStylesheets().add("styles.css");			//link to external css
 		
