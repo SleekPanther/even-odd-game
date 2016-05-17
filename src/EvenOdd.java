@@ -131,19 +131,17 @@ public class EvenOdd extends Application {
 		scoreLabel.getStyleClass().addAll("mediumText");
 		scoreLabel.setId("scoreLabel");
 		//scoreLabel.setStyle("-fx-background-color:red; -fx-text-fill: yellow; ");
-		timeScorePane.getChildren().addAll(timeLabel,bonusTimeLabel,scoreLabel);
+		timeScorePane.getChildren().addAll(timeLabel, bonusTimeLabel, scoreLabel);
 		
-		StackPane numberArea = new StackPane();
-		numberArea.setPrefHeight(200);		//maybe just leave this up to the pixel size of "randNumLabel" css fx
-		numberArea.setStyle("-fx-background-color:black");
-		
-		
-		//randNumLabel = new Label( randomNumber + "");
+		StackPane numberAreaPane = new StackPane();
+		numberAreaPane.setPrefHeight(200);		//maybe just leave this up to the pixel size of "randNumLabel" css fx
+		numberAreaPane.setId("numberAreaPane");
+		//numberArea.setStyle("-fx-background-color: black;");
 		randNumLabel = new Label("Press any key to start");
-		randNumLabel.setStyle("-fx-background-color:darkblue; -fx-text-fill:lime; -fx-font-size: 30px");
-		//randNumLabel.setStyle("-fx-font-size: 100px");		//make it biger in startAGame
-		numberArea.getChildren().add(randNumLabel);
-		
+		randNumLabel.getStyleClass().addAll("mediumText");
+		randNumLabel.setId("randNumLabel");
+		//randNumLabel.setStyle("-fx-background-color:darkblue; -fx-text-fill:lime; -fx-font-size: 30px");
+		numberAreaPane.getChildren().add(randNumLabel);
 		
 		Label oddLabel = new Label("     Odd\n(left arrow)");
 		oddLabel.setStyle("-fx-background-color:white");
@@ -169,7 +167,7 @@ public class EvenOdd extends Application {
 		//StackPane evenOddContainer = new StackPane();
 		evenOddContainer.getChildren().add(evenOddPane);
 		
-		mainGamePane.addColumn(0, timeScorePane, numberArea, evenOddContainer);
+		mainGamePane.addColumn(0, timeScorePane, numberAreaPane, evenOddContainer);
 //		mainGamePane.add(gameStatusTopbar, 0, 0);
 //		mainGamePane.add(evenOddContainer,0,2);
 		
@@ -306,7 +304,8 @@ public class EvenOdd extends Application {
 		timerAnimation.play();			//& start the countdown
 		
 		scoreLabel.setText(finalScore + "");			//set the text of the score (mostly for game restarts)
-		randNumLabel.setStyle(" -fx-text-fill:lime; -fx-font-size: 100px");		//make it bigger since it only holds a few digits now, but also duplicate tet color
+		randNumLabel.setId("randNumLabelRun");		//make it bigger since it only holds a few digits now, but also duplicate text color
+		//randNumLabel.setStyle(" -fx-text-fill:lime; -fx-font-size: 100px");		//make it bigger since it only holds a few digits now, but also duplicate text color
 		displayNewNumber();		//pick a new number and essentially start the game
 	}
 	

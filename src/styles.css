@@ -29,6 +29,17 @@
 	
 }
 
+#numberAreaPane{
+	-fx-background-color: black;
+}
+#randNumLabel{
+	-fx-background-color: darkblue;
+	-fx-text-fill: lime;
+}
+#randNumLabelRun{
+	-fx-text-fill:lime;
+	 -fx-font-size: 120px
+}
 .odd-and-even-pane{
 	
 }
