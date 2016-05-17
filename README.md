@@ -17,6 +17,11 @@ A recreation of a simple Andoid app I liked and wanted to code myself
 4. Click View Raw & the file should download
 5. Double-click `EvenOdd.jar` to run the game
 
+###Important Notes for High Scores###
+- **When you download an updated version of the game, simply overwrite or delete the old `EvenOdd.jar` file**
+- **Saving `EvenOdd.jar` in a new location will reset your high score**
+- **Moving the existing `EvenOdd.jar` file will also reset your score**
+
 ###Zip Method###
 1. **Download Zip** from this GitHub page (or clone the repository).
     * You really just need the `EvenOdd.jar` file but you can download all the files if you want
