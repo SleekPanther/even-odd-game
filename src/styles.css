@@ -1,5 +1,34 @@
 /*--------------------------------------------Main Game Scene (the one that appear when the game starts)-------------------------------------------- */
 
+.align-center{	/*mostly for VBoxes */
+	-fx-alignment: center;
+}
+.largeText{
+	 -fx-font-size: 50px;
+}
+.mediumText{
+	-fx-font-size: 30px;
+}
+.smallText{
+	-fx-font-size: 20px;
+}
+
+#timeScorePane{
+	-fx-background-color: grey;
+}
+#timeLabel{
+	/*text color?*/
+}
+#bonusTimeLabel{
+	/*-fx-background-color: pink;
+	-fx-background-radius: 10px;
+	-fx-padding: 0 5px;*/
+	-fx-text-fill: red;
+}
+#scoreLabel{
+	
+}
+
 .odd-and-even-pane{
 	
 }

@@ -111,20 +111,26 @@ public class EvenOdd extends Application {
 	 */
 	public void setUpGUI(){
 		mainGamePane = new GridPane();
-		mainGamePane.setStyle("-fx-background-color:white");
 		
 		//timer & random numbers
 		VBox timeScorePane = new VBox();
-		timeScorePane.setAlignment(Pos.CENTER);		//center the entire pane (& therefore all it's nodes)
-		timeScorePane.setStyle("-fx-background-color: lightyellow");
+		timeScorePane.getStyleClass().addAll("align-center");		//centers all children elements (timer, score & bonus)
+		timeScorePane.setId("timeScorePane");
+		//timeScorePane.setAlignment(Pos.CENTER);		//center the entire pane (& therefore all it's nodes)
+		//timeScorePane.setStyle("-fx-background-color: lightyellow");
 		timeLabel = new Label(timeRemaining + "");		//create label & set text. Kind of unnecessary since updateTimer() is called almost immediately which starts counting down from 10 anyway
-		timeLabel.setStyle("-fx-background-color:blue; -fx-font-size: 50px");
-		timeLabel.setAlignment(Pos.CENTER);
+		timeLabel.setId("timeLabel");
+		timeLabel.getStyleClass().addAll("largeText");
+		//timeLabel.setStyle("-fx-background-color:blue; -fx-font-size: 50px");
 		bonusTimeLabel = new Label("");		//create label to hold "+10 Sec" when a time bonus is reached
-		bonusTimeLabel.setStyle("-fx-font-size: 20px");
-		bonusTimeLabel.setAlignment(Pos.CENTER);
+		bonusTimeLabel.setId("bonusTimeLabel");
+		bonusTimeLabel.getStyleClass().addAll("smallText");
+		//bonusTimeLabel.setStyle("-fx-font-size: 20px");
+		//bonusTimeLabel.setAlignment(Pos.CENTER);
 		scoreLabel = new Label(finalScore + "");		//set initial score to 0.
-		scoreLabel.setStyle("-fx-background-color:red; -fx-text-fill: yellow; -fx-font-size: 30px");
+		scoreLabel.getStyleClass().addAll("mediumText");
+		scoreLabel.setId("scoreLabel");
+		//scoreLabel.setStyle("-fx-background-color:red; -fx-text-fill: yellow; ");
 		timeScorePane.getChildren().addAll(timeLabel,bonusTimeLabel,scoreLabel);
 		
 		StackPane numberArea = new StackPane();
