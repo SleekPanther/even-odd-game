@@ -1,0 +1,10 @@
+/*--------------------------------------------Main Game Scene (the one that appear when the game starts)-------------------------------------------- */
+
+.odd-and-even-pane{
+	
+}
+#odd-pane{
+	-fx-background-color: orange;
+}
+
+/*-------------------------------------------- Game over scene-------------------------------------------- */

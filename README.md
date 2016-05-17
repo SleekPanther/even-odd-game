@@ -10,7 +10,7 @@ A recreation of a simple Andoid app I liked and wanted to code myself
 ##How to Play/("Install")
 **You will need Java to run the game:** [Download java](https://java.com/en/download/)
 
-### **[Download Runnable JAR File](https://github.com/SleekPanther/even-odd-game/blob/master/EvenOdd.jar?raw=true)** ###
+### **[Download Runnable JAR File Here](https://github.com/SleekPanther/even-odd-game/blob/master/EvenOdd.jar?raw=true)** ###
 1. If that link does't work...
 2. Locate `EvenOdd.jar` in the base folder of this repository
 3. Click it (a blank preview will pop up. You can't actually see the contents since it's a binary file)

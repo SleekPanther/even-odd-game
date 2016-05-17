@@ -1,4 +1,5 @@
 //make "space to restart" obvious (difference color)
+//external css file for buttons?
 import javafx.application.Application;
 import javafx.animation.Timeline;			//Timeline animations
 import javafx.animation.KeyFrame;
@@ -150,10 +151,13 @@ public class EvenOdd extends Application {
 		StackPane oddPane = new StackPane();
 		evenPane.getChildren().add(evenLabel);
 		oddPane.setPrefWidth(windowWidth/2.0);		//take up half the window. +40 @ 360px width does a fix, but expands the entire window as  well
-		oddPane.setStyle("-fx-background-color:orange");
+		//oddPane.setStyle("-fx-background-color:orange");
+		oddPane.getStyleClass().addAll("odd-and-even-pane");
+		oddPane.setId("odd-pane");
 		oddPane.getChildren().add(oddLabel);
 		GridPane evenOddPane = new GridPane();	//add thing in constructor here
-		evenOddPane.setStyle("-fx-background-color:purple");
+		//evenOddPane.getStyleClass().add("even-odd-pane");
+		//evenOddPane.setStyle("-fx-background-color:purple");
 		evenOddPane.addRow(0, oddPane, evenPane);
 		FlowPane evenOddContainer = new FlowPane();
 		//StackPane evenOddContainer = new StackPane();
@@ -165,7 +169,7 @@ public class EvenOdd extends Application {
 		
 		//mainGamePane.setPrefSize(windowWidth, windowHeight);
 		gameScene = new Scene(mainGamePane);
-		
+		gameScene.getStylesheets().add("styles.css");			//link to external css
 		
 		
 		//stare creating "Game Over" scene --------------------------------------------------------------
@@ -193,6 +197,7 @@ public class EvenOdd extends Application {
 		finalScorePane.addColumn(1, finalScoreLbl, actualFinalScore, highScoreLabel, actualHighScore, restartInstructionsLbl);
 		gameOverPane.getChildren().addAll(gameOverLabel, finalScorePane);
 		gameOverScene = new Scene(gameOverPane);
+		gameOverScene.getStylesheets().add("styles.css");				//add external css styles 
 		//end creating game over scene -------------------------------------------------------------------
 		
 		primaryStage.setTitle("Even Odd");
