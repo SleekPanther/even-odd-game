@@ -178,14 +178,14 @@ public class EvenOdd extends Application {
 		//gameOverPane.setAlignment(Pos.TOP_CENTER);
 		//gameOverPane.setStyle("-fx-background-color: gold;");
 		gameOverPane.setId("gameOverPane");
-		GridPane finalScorePane = new GridPane();
+		VBox finalScorePane = new VBox();
 		finalScorePane.setId("finalScorePane");
+		finalScorePane.setPrefWidth(50);
 		//finalScorePane.setStyle("-fx-background-color: yellow");
 		Label gameOverLabel = new Label("Game Over");
 		gameOverLabel.getStyleClass().addAll("largeText");
 		//gameOverLabel.setStyle("-fx-font-size: 50px; ");
 		//gameOverLabel.setAlignment(Pos.BASELINE_RIGHT);
-		Rectangle fillerRect1 = new Rectangle(50, 0, Color.TRANSPARENT);		//this "spacer" rectangle has width, but is 0px tall & transparent, so just there to provide space on the left
 		Label finalScoreLabel = new Label("Score: ");
 		finalScoreLabel.getStyleClass().addAll("mediumText");
 		//finalScoreLbl.setStyle("-fx-font-size: 30px; ");
@@ -198,8 +198,7 @@ public class EvenOdd extends Application {
 		actualHighScore = new Label(highscore + "");			//kind of don't need a default value
 		actualHighScore.getStyleClass().addAll("largeText");
 		//actualHighScore.setStyle("-fx-font-size: 50px; ");
-		finalScorePane.addColumn(0, fillerRect1);
-		finalScorePane.addColumn(1, finalScoreLabel, actualFinalScore, highScoreLabel, actualHighScore);
+		finalScorePane.getChildren().addAll(finalScoreLabel, actualFinalScore, highScoreLabel, actualHighScore);
 		Label restartInstructionsLabel = new Label("Press SPACE to restart");
 		restartInstructionsLabel.getStyleClass().addAll("smallText");
 		restartInstructionsLabel.setId("restartInstructionsLabel");

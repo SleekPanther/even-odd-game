@@ -64,6 +64,13 @@
 }
 #finalScorePane{
 	-fx-background-color: yellow;
+	-fx-padding: 0 0 0 30px;
+	-fx-background-radius: 20px;
+	/*-fx-border-color: gold;
+	-fx-border-width: 20px;*/
+}
+#finalScorePaneContainer{
+	
 }
 
 #restartInstructionsLabel{
