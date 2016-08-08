@@ -72,8 +72,8 @@ public class EvenOdd extends Application {
 	
 	private int randomNumber = (int)(Math.random()*10);		//initialize just in case, but its value should be set in displayNewNumber @ the start of a game
 	private Random generator = new Random();
-	private final int RANDOM_LOWER_BOUND = 0;
-	private final int RANDOM_UPPER_BOUND = 201;		//this must be 1 larger than the actual desired max value
+	private final int RANDOM_LOWER_BOUND = 1;
+	private final int RANDOM_UPPER_BOUND = 1000;		//this must be 1 larger than the actual desired max value
 	private String currentUserGuess;		//need to initialize? or would that cause problems if they didn't press any keys...
 	
 	private String gameMode = "waiting";		//"waiting" = start screen, "running"=currently being played & new number show up, "over"=switch scene & display score
