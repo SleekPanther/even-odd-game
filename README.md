@@ -1,5 +1,5 @@
 # Even or Odd Game
-## **[Download Latest Release](https://github.com/SleekPanther/even-odd-game/releases/latest)** ##
+## **[Download Latest Release](https://github.com/SleekPanther/even-odd-game/releases/latest)**
 ## What is it?
 A recreation of a simple Andoid app I liked and wanted to code myself <br>
 [Original Android App](https://play.google.com/store/apps/details?id=com.tamaleh.app)
@@ -14,7 +14,7 @@ A recreation of a simple Andoid app I liked and wanted to code myself <br>
 
 ### **[Download Latest Release (same link as above)](https://github.com/SleekPanther/even-odd-game/releases/latest)**
 
-### Important Notes for High Scores###
+### Important Notes for High Scores
 - **When you download an updated version of the game, simply overwrite or delete the old `EvenOdd.jar` file**
 - **Saving `EvenOdd.jar` in a new location will reset your high score**
 - **Moving the existing `EvenOdd.jar` file will also reset your score**
