@@ -5,3 +5,4 @@ bin/
 
 #ignore the high scores file
 .CONFIG_DO_NOT_MODIFY
+*.class
