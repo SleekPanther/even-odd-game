@@ -4,6 +4,7 @@
 A recreation of a simple Andoid app I liked and wanted to code myself <br>
 [Original Android App](https://play.google.com/store/apps/details?id=com.tamaleh.app)
 
+### Demo
 ![](pictures/demo1.gif)
 
 - A random number appears & the you must identify if it's Even or Odd. (It's really that simple)
